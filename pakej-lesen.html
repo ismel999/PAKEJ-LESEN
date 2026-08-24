@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pakej Lesen Memandu — Senarai Harga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt: #1B2430;
+    --asphalt-2: #232E3D;
+    --paper: #F6F4EE;
+    --signal-yellow: #F2B705;
+    --stop-red: #C13B3B;
+    --line-grey: #8A93A3;
+    --ink: #1B2430;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html,body{ background: var(--paper); color: var(--ink); font-family:'Inter', sans-serif; }
+  body{ overflow-x:hidden; }
+
+  h1,h2,h3, .display{
+    font-family:'Barlow Condensed', sans-serif;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  /* ===== HEADER / HERO ===== */
+  header{
+    background: var(--asphalt);
+    color: var(--paper);
+    padding: 64px 24px 96px;
+    position: relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom: 40px;
+    height: 6px;
+    background: repeating-linear-gradient(
+      to right,
+      var(--signal-yellow) 0px, var(--signal-yellow) 48px,
+      transparent 48px, transparent 88px
+    );
+    opacity: 0.85;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--signal-yellow);
+    border: 1px solid rgba(242,183,5,0.5);
+    padding: 6px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 24px;
+  }
+  header h1{
+    font-size: clamp(40px, 7vw, 76px);
+    font-weight: 800;
+    line-height: 0.98;
+    max-width: 900px;
+  }
+  header h1 span{ color: var(--signal-yellow); }
+  header p.lede{
+    font-family:'Inter', sans-serif;
+    text-transform:none;
+    letter-spacing: normal;
+    max-width: 560px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #C7CDD8;
+    margin-top: 20px;
+  }
+
+  /* ===== ROAD SECTION ===== */
+  .road{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+    position: relative;
+  }
+  .road-title{
+    text-align:center;
+    margin: -48px 0 48px;
+    position:relative;
+    z-index: 2;
+  }
+  .road-title span{
+    background: var(--paper);
+    padding: 10px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--asphalt);
+    border: 2px solid var(--asphalt);
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .lanes{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    position: relative;
+  }
+  .lanes::before{
+    content:"";
+    position:absolute;
+    left:50%; top:0; bottom:0;
+    transform: translateX(-50%);
+    width: 4px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--signal-yellow) 0, var(--signal-yellow) 24px,
+      transparent 24px, transparent 48px
+    );
+  }
+  .lane{ padding: 0 32px; }
+  .lane-label{
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .lane-label .dot{
+    width: 10px; height:10px; border-radius:50%;
+    background: var(--stop-red);
+    flex-shrink:0;
+  }
+  .lane--moto .lane-label .dot{ background: var(--signal-yellow); }
+  .lane--kereta .lane-label .dot{ background: var(--stop-red); }
+
+  .card{
+    background: #fff;
+    border: 2px solid var(--asphalt);
+    border-radius: 14px;
+    padding: 26px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover{
+    transform: translateY(-4px);
+    box-shadow: 8px 8px 0 var(--asphalt);
+  }
+  .plate{
+    display:inline-block;
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    background: var(--asphalt);
+    color: var(--signal-yellow);
+    padding: 4px 12px;
+    border-radius: 5px;
+    margin-bottom: 14px;
+  }
+  .card h3{
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .card .sub{
+    font-family: 'Inter', sans-serif;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 14px;
+    color: #5A6474;
+    margin-bottom: 18px;
+  }
+  .price-row{
+    display:flex;
+    align-items:baseline;
+    justify-content: space-between;
+    border-top: 1px dashed #D8D3C6;
+    padding-top: 16px;
+  }
+  .price{
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    color: var(--asphalt);
+  }
+  .price small{
+    font-family:'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8A93A3;
+    text-transform:none;
+    margin-left: 4px;
+  }
+  .tag{
+    font-family:'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform:none;
+    background: #F6F4EE;
+    color: var(--asphalt);
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #E3DFD3;
+  }
+
+  /* ===== NOTE / FOOTER ===== */
+  .note{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    font-size: 14px;
+    color: #5A6474;
+    line-height: 1.6;
+  }
+  .note strong{ color: var(--ink); }
+
+  footer{
+    background: var(--asphalt);
+    color: #9AA3B2;
+    text-align:center;
+    padding: 32px 24px;
+    font-size: 13px;
+  }
+  footer .brand{
+    color: var(--paper);
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight:700;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 720px){
+    .lanes{ grid-template-columns: 1fr; }
+    .lanes::before{ left: 0; top:0; bottom:0; width: 0; }
+    .lane{ padding: 0; margin-bottom: 40px; }
+    header{ padding: 48px 20px 72px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="eyebrow">Pratonton Data · Preview Sahaja</span>
+  <h1>Pakej Lesen <span>Memandu</span></h1>
+  <p class="lede">Senarai harga rasmi untuk kelas lesen motosikal dan kereta. Halaman ini adalah paparan statik untuk semakan data pakej sebelum diterbitkan.</p>
+</header>
+
+<div class="road">
+  <div class="road-title"><span>Pilih Lorong Anda</span></div>
+
+  <div class="lanes">
+
+    <div class="lane lane--moto">
+      <div class="lane-label"><span class="dot"></span>Motosikal</div>
+
+      <div class="card">
+        <span class="plate">KELAS B2</span>
+        <h3>Motosikal 250cc ke Bawah</h3>
+        <div class="sub">Untuk motosikal berkapasiti enjin 250cc dan ke bawah.</div>
+        <div class="price-row">
+          <div class="price">RM400<small>.00</small></div>
+          <span class="tag">Pakej Lengkap</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="plate">KELAS B</span>
+        <h3>Motosikal 250cc ke Atas</h3>
+        <div class="sub">Untuk motosikal berkapasiti enjin melebihi 250cc.</div>
+        <div class="price-row">
+          <div class="price">RM600<small>.00</small></div>
+          <span class="tag">Pakej Lengkap</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane lane--kereta">
+      <div class="lane-label"><span class="dot"></span>Kereta</div>
+
+      <div class="card">
+        <span class="plate">KELAS D</span>
+        <h3>Kereta Manual</h3>
+        <div class="sub">Kereta bertransmisi manual (gear tangan).</div>
+        <div class="price-row">
+          <div class="price">RM1,200<small>.00</small></div>
+          <span class="tag">Pakej Lengkap</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="plate">KELAS DA</span>
+        <h3>Kereta Auto</h3>
+        <div class="sub">Kereta bertransmisi automatik.</div>
+        <div class="price-row">
+          <div class="price">RM1,300<small>.00</small></div>
+          <span class="tag">Pakej Lengkap</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="note"><strong>Nota:</strong> Harga di atas adalah untuk tujuan pratonton data sahaja dan boleh dikemas kini. Sila kemaskini kandungan (nama pusat latihan, butiran hubungan, terma pakej) sebelum halaman ini diterbitkan secara rasmi.</p>
+
+<footer>
+  <div class="brand">PUSAT LATIHAN MEMANDU</div>
+  Senarai pakej lesen — dijana untuk semakan dalaman
+</footer>
+
+</body>
+</html>
