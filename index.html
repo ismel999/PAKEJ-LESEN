@@ -657,10 +657,15 @@
     border-radius: 10px;
     padding: 8px 9px;
     background: #FAFAFB;
+    display: flex;
+    flex-direction: column;
   }
-  .sesi-item.tiada-jadual { opacity: 0.55; }
+  .sesi-item.tiada-jadual { opacity: 0.7; }
+  .sesi-item.hadir { border-color: var(--hijau-muda); background: var(--hijau-muda); }
   .sesi-item .sesi-label { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
   .sesi-item .sesi-tarikh { font-size: 11px; color: var(--teks-lembut); margin-bottom: 5px; }
+  .sesi-item .sesi-tarikh.kosong { font-style: italic; }
+  .sesi-aksi { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
   .btn-sesi {
     border: none;
     border-radius: 16px;
@@ -671,7 +676,6 @@
     width: 100%;
     background: var(--oren);
     color: #fff;
-    margin-bottom: 4px;
     font-family: inherit;
   }
   .btn-sesi:hover { background: var(--oren-gelap); }
@@ -707,39 +711,51 @@
     font-family: inherit;
   }
 
-  .latihan-dropdown { position: relative; }
-  .btn-sesi-toggle {
-    border: 1px solid var(--oren);
-    background: var(--oren-muda);
-    color: var(--oren-gelap);
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: inherit;
-  }
-  .btn-sesi-toggle:hover { background: #FFE3C4; }
-  .btn-sesi-toggle .anak-panah { margin-left: 4px; font-size: 10px; }
-  .latihan-popup {
-    display: none;
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    z-index: 40;
-    background: var(--kad);
+  /* ===== TAMBAHAN (mockup diluluskan): blok "Latihan Praktikal" 2 peringkat
+     — tajuk (klik utk buka/tutup) + panel (grid kad sesi, SEMUA terus
+     kelihatan sekali panel dibuka). Gantikan .latihan-dropdown/
+     .btn-sesi-toggle/.latihan-popup (popup terapung+skrol) lama. SATU rupa
+     dikongsi kad pelajar (Senarai Pelajar/Selesai) & kad "Pelajar Didaftar
+     Kaunter". ===== */
+  .blok-latihan { margin-top: 14px; }
+  .blok-latihan:first-child { margin-top: 0; }
+  .latihan-tajuk {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     border: 1px solid var(--garis);
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
-    width: max-content;
-    max-width: 340px;
-    max-height: 260px;
-    overflow-y: auto;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 10px 13px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
   }
-  .latihan-popup.terbuka { display: block; }
-  .sesi-grid { display: grid; grid-template-columns: repeat(3, 96px); gap: 8px; }
+  .latihan-tajuk:hover { border-color: var(--oren); background: var(--oren-muda); }
+  .latihan-tajuk .ikon-jenis { color: var(--oren); font-size: 13px; }
+  .latihan-tajuk .nama-tajuk { font-size: 12.5px; font-weight: 700; }
+  .latihan-tajuk .had-hadir { margin-left: auto; font-weight: 700; color: var(--teks-lembut); font-size: 11.5px; }
+  .latihan-tajuk .chevron { color: var(--teks-lembut); font-size: 11px; transition: transform .15s; flex-shrink: 0; }
+  .latihan-tajuk.terbuka .chevron { transform: rotate(180deg); color: var(--oren-gelap); }
+  .latihan-tajuk.terbuka { border-color: var(--oren); }
+
+  .latihan-panel { display: none; padding-top: 10px; }
+  .latihan-panel.terbuka { display: block; }
+
+  .sesi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 8px; }
+
+  /* TAMBAHAN: butang "Pilih Tarikh"/"Tukar" (.kk-btn-pilih sedia ada) bila
+     duduk dlm kad .sesi-aksi (blok kaunter) — dikecilkan muat sekali dgn
+     butang Sahkan dlm kad kecik (EXACT class/wiring .kk-btn-pilih TAK
+     diubah, cuma rupa visual bila ia di dalam .sesi-aksi). */
+  .sesi-aksi .kk-btn-pilih {
+    width: 100%;
+    justify-content: center;
+    border-radius: 16px;
+    font-size: 10.5px;
+    padding: 5px 8px;
+  }
 
   /* ===== kalendar ===== */
   .kalendar-nav {
@@ -1461,6 +1477,11 @@
   .drm-btn-oren { background: var(--oren); color: #fff; }
   .drm-btn-oren:hover { background: var(--oren-gelap); }
   .drm-btn-oren:disabled { background: var(--garis); color: #AAAAAA; cursor: default; }
+  /* TAMBAHAN: butang "Sahkan Pembayaran (Tunai)" dlm panel berjaya daftar —
+     hijau (konsisten dgn warna "sah/disahkan" lain dalam app ni). */
+  .drm-btn-hijau { background: var(--hijau); color: #fff; }
+  .drm-btn-hijau:hover { background: #166b45; }
+  .drm-btn-hijau:disabled { background: var(--garis); color: #AAAAAA; cursor: default; }
   .drm-form { display: none; }
   .drm-form.tunjuk { display: block; }
   .drm-panel-jaya { display: none; padding: 26px 30px; text-align: center; }
@@ -1510,6 +1531,9 @@
   .drmkal-sel:hover:not(.drmkal-tarikh-tutup):not(.drmkal-penuh) { border-color: var(--oren); background: var(--oren-muda); }
   .drmkal-sel.drmkal-dipilih { background: var(--oren); border-color: var(--oren-gelap); color: #fff; }
   .drmkal-sel.drmkal-dipilih .drmkal-baki { color: #fff; }
+  /* TAMBAHAN (2 pakej): tag kecil "M"/"K"/"M+K" dekat tarikh Ceramah yg dah
+     ditetapkan utk Moto/Kereta (mod 2 pakej je) */
+  .drmkal-sel .drmkal-tag-jenis { font-size: 7.5px; font-weight: 800; letter-spacing: 0.5px; margin-top: 1px; }
   .drmkal-pilihan { margin-top: 10px; font-size: 11.5px; color: var(--teks-lembut); font-weight: 600; }
   .drmkal-sesi-wrap { margin-top: 14px; }
   .drmkal-sesi-wrap label { display: block; font-size: 11.5px; font-weight: 700; color: var(--teks-lembut); margin-bottom: 6px; }
@@ -1545,6 +1569,15 @@
   .kk-nama { font-weight: 700; font-size: 14px; }
   .kk-id { font-size: 11.5px; color: var(--teks-lembut); }
   .kk-tag { background: #eef6ff; color: #1c5a94; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+  /* TAMBAHAN: ikon sumber pendaftaran (App / Kaunter) di hujung nama — tab "Selesai" */
+  .tag-sumber { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 10.5px; margin-left: 6px; vertical-align: middle; }
+  .tag-sumber-app { background: #e8f7ef; color: #1f8a4c; }
+  .tag-sumber-kaunter { background: #eef6ff; color: #1c5a94; }
+  /* TAMBAHAN: nota diagnostik "sebab belum Selesai" — tab "Pelajar Didaftar Kaunter" */
+  .nota-belum-selesai { background: #fff6e9; border: 1px solid #ffdca3; border-radius: 10px; padding: 10px 13px; margin-bottom: 14px; font-size: 12px; color: #8a5a00; }
+  .nota-belum-selesai .nota-tajuk { font-weight: 700; margin-bottom: 4px; }
+  .nota-belum-selesai ul { margin: 0; padding-left: 18px; }
+  .nota-belum-selesai li { margin: 2px 0; }
   .kk-chevron { color: var(--teks-lembut); font-size: 12px; transition: transform .15s; }
   .kk-kad.terbuka .kk-chevron { transform: rotate(180deg); }
   .kk-detail { max-height: 0; overflow: hidden; transition: max-height .2s ease; }
@@ -1807,13 +1840,12 @@
                   <select id="drmPakejKereta">
                     <option value="">Belum Pilih Pakej Kereta</option>
                   </select>
-                  <!-- TAMBAHAN: nota muncul bila KEDUA-DUA dropdown dipilih
-                       sekali — Ceramah inline kalendar di bawah terpaksa
-                       dilangkau utk pelajar 2 pakej sebab kena pecah
-                       ceramahMoto/ceramahKereta (admin tetapkan lepas ni
-                       dari tab "Pelajar Didaftar Kaunter"). -->
+                  <!-- KEMASKINI: nota muncul bila KEDUA-DUA dropdown dipilih
+                       sekali — terangkan cara pilih tarikh Ceramah utk 2 jenis
+                       (klik tarikh di bawah -> pilih Moto atau Kereta, ulang
+                       utk jenis lain). -->
                   <div id="drmNotaDuaPakej" class="drm-opsyen" style="display:none; margin-top:6px; color:var(--oren-gelap);">
-                    ℹ️ Pelajar 2 pakej (Moto + Kereta) — tarikh Ceramah kena ditetapkan BERASINGAN (Moto &amp; Kereta) selepas ni dari tab "Pelajar Didaftar Kaunter", jadi pilihan tarikh Ceramah di bawah dilangkau utk pelajar ni. Tarikh Ujian Komputer tetap boleh dipilih terus macam biasa.
+                    ℹ️ Pelajar 2 pakej (Moto + Kereta) — tarikh Ceramah kena ditetapkan BERASINGAN utk Moto &amp; Kereta. Klik tarikh dalam kalendar "Tarikh Ceramah" di bawah, pastu pilih sama ada utk Moto atau Kereta (ulang sekali lagi utk jenis yang lain). Tarikh Ujian Komputer tetap TUNGGAL macam biasa.
                   </div>
                 </div>
               </div>
@@ -1860,6 +1892,13 @@
                 </div>
                 <div class="drmkal-grid-hari"><span>I</span><span>S</span><span>R</span><span>K</span><span>J</span><span>S</span><span>A</span></div>
                 <div class="drmkal-grid" id="drmCeramahGrid"></div>
+                <!-- TAMBAHAN (2 pakej): sub-paparan "tarikh ni utk Moto atau
+                     Kereta?" — muncul cuma bila KEDUA-DUA pakej dipilih
+                     (drmBukaPilihJenisCeramah()), sama pattern kkPilihTarikhUKModal. -->
+                <div class="drmkal-sesi-wrap" id="drmCeramahJenisWrap" style="display:none;">
+                  <label>Tarikh <span id="drmCeramahJenisTarikhTeks"></span> ni untuk pakej:</label>
+                  <div class="drmkal-sesi-grid" id="drmCeramahJenisBtnWrap"></div>
+                </div>
                 <div class="drmkal-pilihan" id="drmCeramahPilihanTeks">Belum pilih tarikh</div>
               </div>
 
@@ -1897,6 +1936,20 @@
 
             <div class="drm-slip-ringkas" id="drmSlipRingkas"></div>
 
+            <!-- TAMBAHAN: "Sahkan Pembayaran (Tunai)" — pembayaran kaunter
+                 dibayar CASH terus kat kaunter, so admin boleh sahkan DI SINI
+                 sekali gus lepas duit diterima (guna SEMULA EXACT
+                 sahkanPembayaran() yg sama dgn tab Senarai Pelajar/Kaunter —
+                 TIADA logik sahkan baru). Cuma ditunjukkan kalau pelajar ni
+                 ada pakej dipilih (ada jumlah utk dibayar) — lihat
+                 drmKemaskiniPanelBayaranLepasDaftar(). Kalau admin tak sahkan
+                 di sini, boleh sahkan kemudian dari tab "Pelajar Didaftar
+                 Kaunter" (baris Bayaran kad tu) — SAMA butang/fungsi. -->
+            <div class="drm-panel-bayaran" id="drmPanelBayaranLepasDaftar" style="display:none; margin-bottom:14px;">
+              <div class="drm-nota" id="drmNotaBayaranLepasDaftar"></div>
+              <button type="button" class="drm-btn drm-btn-hijau" id="drmBtnSahBayaranLepasDaftar" style="width:100%; margin-top:8px;"><i class="fa-solid fa-money-bill-wave"></i> Sahkan Pembayaran (Tunai) Diterima</button>
+            </div>
+
             <div class="drm-aksi-jaya">
               <button type="button" class="drm-btn drm-btn-luar" id="drmBtnDaftarLagi"><i class="fa-solid fa-rotate-left"></i> Daftar Pelajar Lain</button>
               <button type="button" class="drm-btn drm-btn-oren" id="drmBtnCetakSlip"><i class="fa-solid fa-print"></i> Cetak Slip Pendaftaran</button>
@@ -1921,6 +1974,13 @@
         <div class="drm-wrap">
           <div class="kk-seksyen-tajuk"><i class="fa-solid fa-list-check"></i><h3>Pelajar Didaftar Kaunter</h3><span class="kk-kiraan" id="kkKiraan">0</span></div>
           <p class="kk-ket">Pelajar ni tak guna app sendiri — admin pilih tarikh bagi pihak diorang, pastu sahkan macam biasa.</p>
+          <!-- TAMBAHAN: carian nama/no.KP khusus tab ni — guna SEMULA class
+               .cari-wrap sedia ada (sama rupa dgn carian tab Senarai Pelajar),
+               senarai tetap diurutkan abjad A-Z (urutIkutNama(), dah sedia ada). -->
+          <div class="cari-wrap" style="max-width:360px; margin-bottom:14px;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="kkCarian" type="text" placeholder="Cari nama / no. KP...">
+          </div>
           <div id="kkSenaraiWrap"></div>
         </div>
       </div>
@@ -2116,6 +2176,10 @@
   const drmBtnCetakSlip = document.getElementById("drmBtnCetakSlip");
   const drmBtnSelesai = document.getElementById("drmBtnSelesai"); // TAMBAHAN
   const drmSlipRingkas = document.getElementById("drmSlipRingkas");
+  // TAMBAHAN: panel "Sahkan Pembayaran (Tunai)" lepas daftar
+  const drmPanelBayaranLepasDaftar = document.getElementById("drmPanelBayaranLepasDaftar");
+  const drmNotaBayaranLepasDaftar = document.getElementById("drmNotaBayaranLepasDaftar");
+  const drmBtnSahBayaranLepasDaftar = document.getElementById("drmBtnSahBayaranLepasDaftar");
 
   // TAMBAHAN: rujukan DOM kalendar Ceramah & Ujian Komputer (dlm borang Daftar Memandu)
   const drmCeramahGrid = document.getElementById("drmCeramahGrid");
@@ -2123,6 +2187,10 @@
   const drmCeramahPrev = document.getElementById("drmCeramahPrev");
   const drmCeramahNext = document.getElementById("drmCeramahNext");
   const drmCeramahPilihanTeks = document.getElementById("drmCeramahPilihanTeks");
+  // KEMASKINI (2 pakej): sub-paparan pilih Moto/Kereta utk SATU tarikh Ceramah yg diklik
+  const drmCeramahJenisWrap = document.getElementById("drmCeramahJenisWrap");
+  const drmCeramahJenisTarikhTeks = document.getElementById("drmCeramahJenisTarikhTeks");
+  const drmCeramahJenisBtnWrap = document.getElementById("drmCeramahJenisBtnWrap");
   const drmUkGrid = document.getElementById("drmUkGrid");
   const drmUkLabel = document.getElementById("drmUkLabel");
   const drmUkPrev = document.getElementById("drmUkPrev");
@@ -2135,6 +2203,7 @@
   // TAMBAHAN: rujukan DOM untuk senarai "Pelajar Didaftar Kaunter" + mini-kalendar
   const kkSenaraiWrap = document.getElementById("kkSenaraiWrap");
   const kkKiraanEl = document.getElementById("kkKiraan");
+  const kkCarianEl = document.getElementById("kkCarian"); // TAMBAHAN: carian khusus tab ni
   const kkKalOverlay = document.getElementById("kkKalOverlay");
   const kkKalNavWrap = document.getElementById("kkKalNavWrap");
   const kkKalLabelBulan = document.getElementById("kkKalLabelBulan");
@@ -2252,14 +2321,27 @@
   const KUNCI_LATIHAN_KERETA = "latihanPraktikalKereta";
   const KOLEKSI_LATIHAN = {
     latihanPraktikalMoto:   { jenis: "MOTO",   label: "Moto",   sesi: "latihan_moto_slots",   qti: "latihan_moto_qti_slots",   jumlahSesiLalai: 7 },
-    latihanPraktikalKereta: { jenis: "KERETA", label: "Kereta", sesi: "latihan_kereta_slots", qti: "latihan_kereta_qti_slots", jumlahSesiLalai: 9 }
+    // KEMASKINI: Latihan Kereta = 10 sesi (bukan 9) + 1 QTI = 11 jumlah
+    // keseluruhan. jumlahSesiLalai ni SATU sumber kebenaran dikongsi oleh
+    // kkBlokLatihan() (bilangan baris Sesi dipaparkan), kkTetapkanLatihanSesi()
+    // (padding senarai + penentu "sesi terakhir" pemicu auto-QTI) & tempat lain
+    // yg guna KOLEKSI_LATIHAN — tukar SATU nombor ni je, semua tempat terus ikut.
+    latihanPraktikalKereta: { jenis: "KERETA", label: "Kereta", sesi: "latihan_kereta_slots", qti: "latihan_kereta_qti_slots", jumlahSesiLalai: 10 }
   };
 
   let senaraiPelajar = [];
   let senaraiPermintaan = []; // TAMBAHAN: permintaan tukar tarikh berstatus MENUNGGU
   let unsubscribeSnapshot = null;
   let unsubscribePermintaan = null; // TAMBAHAN
-  let popupLatihanTerbuka = null; // TAMBAHAN: uid pelajar yang popup sesi dia sedang terbuka (satu je pada satu masa)
+  // KEMASKINI (mockup diluluskan, pastu dikemaskini lagi ikut maklum balas
+  // admin — "papar semua terus, tak payah sembunyi-sembunyi"): "Lihat Sesi"
+  // popup terapung digantikan dgn blok tajuk+panel inline
+  // (htmlBlokLatihanTajukPanel()) — tekan TAJUK buka/tutup panel, panel
+  // tunjuk SEMUA sesi SEKALI GUS (tiada lagi "4 dulu + Lihat Lagi"). BEBERAPA
+  // blok boleh terbuka SERENTAK (bukan satu je pada satu masa macam popup
+  // lama), so pakai Set (SAMA pattern dgn kadTerbukaSet di bawah) dipetakan
+  // ikut kunci "uid|kunci" (kunci = latihanPraktikalMoto/latihanPraktikalKereta).
+  let latihanTerbukaSet = new Set(); // TAMBAHAN: "uid|kunci" blok Latihan Praktikal mana yg tajuk-nya ditekan (panel terbuka)
   // TAMBAHAN: set uid kad pelajar yang SEDANG TERBUKA (collapse-by-default /
   // expand-on-klik — lihat baris_htmlKad()). Set (bukan boolean tunggal)
   // sebab BEBERAPA kad boleh terbuka SERENTAK & bebas (bukan accordion yang
@@ -2461,12 +2543,31 @@
     return `RM ${(Math.round(sen) / 100).toFixed(2)}`;
   }
 
-  // TAMBAHAN: tunjuk/sembunyi nota "2 pakej" (Ceramah inline dilangkau) bila
-  // KEDUA-DUA dropdown dipilih sekali gus.
+  // TAMBAHAN: true kalau KEDUA-DUA dropdown pakej dipilih sekali gus — SATU
+  // sumber kebenaran dikongsi oleh nota, kalendar Ceramah & daftarPelajarKaunter().
+  function drmModeDuaPakej() {
+    return !!(drmPakejMoto && drmPakejMoto.value) && !!(drmPakejKereta && drmPakejKereta.value);
+  }
+
+  // TAMBAHAN: tunjuk/sembunyi nota "2 pakej" + reset pilihan tarikh Ceramah
+  // bila mod dua-pakej TUKAR (dr tunggal->dua atau dua->tunggal) — elak
+  // keadaan "separuh" yg mengelirukan (cth: dah pilih 1 tarikh mod tunggal,
+  // admin pilih pakej ke-2, tarikh tu jadi tak jelas ia utk Moto/Kereta mana).
+  // Tukar dropdown pakej yg LAIN (cth tukar "Pakej B" -> "Pakej B2" je, mod
+  // tetap sama) TIDAK reset — kekal pilihan tarikh admin.
+  let drmModeDuaPakejSebelumIni = false;
   function drmKemaskiniNotaDuaPakej() {
-    if (!drmNotaDuaPakej) return;
-    const dua = !!(drmPakejMoto && drmPakejMoto.value) && !!(drmPakejKereta && drmPakejKereta.value);
-    drmNotaDuaPakej.style.display = dua ? "" : "none";
+    const dua = drmModeDuaPakej();
+    if (drmNotaDuaPakej) drmNotaDuaPakej.style.display = dua ? "" : "none";
+    if (dua !== drmModeDuaPakejSebelumIni) {
+      drmModeDuaPakejSebelumIni = dua;
+      drmCeramahTarikhPilih = null;
+      drmCeramahTarikhPilihMoto = null;
+      drmCeramahTarikhPilihKereta = null;
+      if (drmCeramahJenisWrap) drmCeramahJenisWrap.style.display = "none";
+      drmRenderCeramahGrid();
+      drmKemaskiniTeksPilihan();
+    }
   }
   if (drmPakejMoto) drmPakejMoto.addEventListener("change", drmKemaskiniNotaDuaPakej);
   if (drmPakejKereta) drmPakejKereta.addEventListener("change", drmKemaskiniNotaDuaPakej);
@@ -2661,6 +2762,10 @@
   }
 
   carianEl.addEventListener("input", render);
+  // TAMBAHAN: carian tab "Pelajar Didaftar Kaunter" — berasingan drpd #carian
+  // (skop tab lain), panggil renderSenaraiKaunter() terus (bukan render()
+  // penuh, elak kerja lebih render tab lain yg tak berkaitan).
+  if (kkCarianEl) kkCarianEl.addEventListener("input", renderSenaraiKaunter);
 
   // ======================================================================
   // TAMBAHAN (visual): toast ringkas menggantikan dialog "alert" bawaan
@@ -2916,7 +3021,7 @@
         sahkanKehadiranQti(btn.dataset.uid, btn.dataset.kunci);
       });
     });
-    // TAMBAHAN: toggle dropdown/popup senarai sesi latihan praktikal
+    // TAMBAHAN: toggle tajuk blok "Latihan Praktikal" (buka/tutup panel jadual)
     containerEl.querySelectorAll("[data-aksi='toggle-latihan']").forEach(btn => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -2981,23 +3086,22 @@
       return;
     }
 
-    selesaiWrap.innerHTML = senaraiSelesai.map(p => barisPelajar(p)).join("");
+    // TAMBAHAN: ikon App/Kaunter kat hujung nama — lihat tagSumberPendaftaran()
+    selesaiWrap.innerHTML = senaraiSelesai.map(p => barisPelajar(p, tagSumberPendaftaran(p))).join("");
     wireKadPelajarEvents(selesaiWrap);
   }
 
-  // TAMBAHAN: buka/tutup popup sesi latihan (klik butang sama = tutup; klik luar = tutup)
-  // KEMASKINI: id popup = "uid|kunci" (Moto & Kereta ada popup masing-masing)
+  // KEMASKINI (mockup diluluskan): buka/tutup blok "Latihan Praktikal" inline
+  // (gantikan popup terapung lama) — BEBERAPA blok (Moto & Kereta, atau
+  // pelbagai pelajar sekaligus) boleh terbuka SERENTAK, so TIADA lagi
+  // "klik luar utk tutup" (itu konsep popup terapung — blok ni dah inline,
+  // tak tutupi apa-apa, so tak perlu auto-tutup bila klik tempat lain).
   function toggleLatihanPopup(uid, kunci = KUNCI_LATIHAN_MOTO) {
     const id = `${uid}|${kunci || KUNCI_LATIHAN_MOTO}`;
-    popupLatihanTerbuka = (popupLatihanTerbuka === id) ? null : id;
+    if (latihanTerbukaSet.has(id)) latihanTerbukaSet.delete(id);
+    else latihanTerbukaSet.add(id);
     render();
   }
-  document.addEventListener("click", () => {
-    if (popupLatihanTerbuka !== null) {
-      popupLatihanTerbuka = null;
-      render();
-    }
-  });
 
   // ======================================================================
   // TAMBAHAN (FIX): TUTUP OTOMATIK PERMINTAAN "MINTA TUKAR TARIKH" YANG
@@ -3272,15 +3376,57 @@
     return [];
   }
 
-  // Latihan: [{kunci, label, lp}] — hanya yg wujud. Pelajar lama = Moto sahaja.
+  // TAMBAHAN (fix bug dilaporkan admin — "daftar kaunter pakej Kereta tapi
+  // Latihan Praktikal Kereta tak muncul langsung"): cari jenis (MOTO/
+  // KERETA) sesuatu NAMA pakej, guna katalog dapatkanSenaraiPakejPenuh()
+  // (SATU sumber kebenaran sedia ada, SAMA yg dropdown #drmPakejMoto/Kereta
+  // & "Pengurusan Pakej" guna — jenis tersimpan kat situ utk SETIAP pakej).
+  function jenisPakejDrpdNama(nama) {
+    if (!nama) return "";
+    const padanan = dapatkanSenaraiPakejPenuh().find(pk => pk.nama === nama);
+    return padanan ? (padanan.jenis || "") : "";
+  }
+  // TAMBAHAN: senarai jenis (["MOTO"]/["KERETA"]/["MOTO","KERETA"]) yg
+  // pakej SEBENAR pelajar ni perlukan — drpd pakejLesen.senarai[].jenis
+  // (2 pakej, dah tersimpan terus) ATAU jenisPakejDrpdNama(pakejLesen.nama)
+  // (1 pakej, kena cari dlm katalog sbb pakejLesen {nama,harga} 1-pakej TAK
+  // simpan jenis terus).
+  function senaraiJenisPakejPelajar(p) {
+    if (adaDuaPakej(p)) {
+      return p.pakejLesen.senarai.map(x => x.jenis).filter(j => j === "MOTO" || j === "KERETA");
+    }
+    if (p.pakejLesen && p.pakejLesen.nama) {
+      const j = jenisPakejDrpdNama(p.pakejLesen.nama);
+      return j ? [j] : [];
+    }
+    return [];
+  }
+
+  // Latihan: [{kunci, label, lp}].
+  // KEMASKINI (fix): sebelum ni blok Latihan cuma muncul kalau field
+  // latihanPraktikalMoto/Kereta DAH WUJUD dlm Firestore — tapi field tu
+  // sendiri baru dicipta bila admin tetapkan SESI PERTAMA
+  // (kkTetapkanLatihanSesi()). Jadi utk pelajar kaunter BARU didaftar
+  // (pakej Kereta sahaja, ATAU 2 pakej yg admin baru mula SATU jenis),
+  // blok jenis yg field-nya belum wujud lagi TAK PERNAH muncul — admin
+  // jadi tak boleh tekan apa-apa utk mula jenis tu (bulan telur-ayam).
+  // FIX: gabungkan jenis drpd PAKEJ pelajar (senaraiJenisPakejPelajar)
+  // DENGAN jenis yg field-nya dah wujud (pelajar lama yg dah ada data) —
+  // lp:null bila field tu sendiri belum wujud (SELAMAT, semua predikat
+  // sedia ada — adaSesi/adaQti/latihanLpBelumSelesai dll — dah handle
+  // lp:null dgn betul sebagai "belum mula").
   function senaraiLatihanPelajar(p) {
+    const jenisDiperlukan = new Set(senaraiJenisPakejPelajar(p));
+    if (p.latihanPraktikalMoto) jenisDiperlukan.add("MOTO");
+    if (p.latihanPraktikalKereta) jenisDiperlukan.add("KERETA");
+
     const hasil = [];
-    if (p.latihanPraktikalMoto) hasil.push({ kunci: KUNCI_LATIHAN_MOTO, label: "Moto", lp: p.latihanPraktikalMoto });
-    if (p.latihanPraktikalKereta) hasil.push({ kunci: KUNCI_LATIHAN_KERETA, label: "Kereta", lp: p.latihanPraktikalKereta });
+    if (jenisDiperlukan.has("MOTO")) hasil.push({ kunci: KUNCI_LATIHAN_MOTO, label: "Moto", lp: p.latihanPraktikalMoto || null });
+    if (jenisDiperlukan.has("KERETA")) hasil.push({ kunci: KUNCI_LATIHAN_KERETA, label: "Kereta", lp: p.latihanPraktikalKereta || null });
     return hasil;
   }
   // label Moto/Kereta cuma dipaparkan bila perlu bezakan (2 pakej / ada latihan kereta)
-  function perluLabelJenis(p) { return adaDuaPakej(p) || !!p.latihanPraktikalKereta; }
+  function perluLabelJenis(p) { return adaDuaPakej(p) || !!p.latihanPraktikalKereta || senaraiJenisPakejPelajar(p).includes("KERETA"); }
 
   // pelajar 2 pakej: SEMUA ceramah (Moto & Kereta) mesti HADIR. Lama: "ceramah" HADIR.
   function ceramahHadir(p) {
@@ -3398,6 +3544,58 @@
     return true;
   }
 
+  // ======================================================================
+  // TAMBAHAN: senarai sebab (Bahasa Melayu, mesra admin) kenapa seorang
+  // pelajar BELUM lagi pelajarSudahSelesai() — SATU-SATU SAMA predikat
+  // (pakejSudahSah/ceramahHadir/ukSudahSah/senaraiLatihanPelajar+
+  // latihanLpBelumSelesai/pembayaran.status) dipecah jadi mesej, supaya
+  // admin boleh nampak TERUS kat kad pelajar kaunter kenapa pelajar tu
+  // "stuck" tak masuk tab Selesai — tak payah teka/tanya developer.
+  // TIADA logik kelayakan baru — cuma "explain" predikat sedia ada.
+  // ======================================================================
+  function senaraiSebabBelumSelesai(p) {
+    const sebab = [];
+    if (!pakejSudahSah(p)) sebab.push("Pakej Lesen belum disahkan");
+
+    const senaraiC = senaraiCeramahPelajar(p);
+    if (senaraiC.length === 0) {
+      sebab.push("Ceramah belum dijadualkan");
+    } else {
+      senaraiC.filter(c => !(c.data && c.data.status === "HADIR")).forEach(c => {
+        sebab.push(`Ceramah${c.label ? " — " + c.label : ""} belum disahkan HADIR`);
+      });
+    }
+
+    if (!ukSudahSah(p)) sebab.push("Ujian Komputer belum disahkan LULUS");
+
+    const senaraiLp = senaraiLatihanPelajar(p);
+    if (senaraiLp.length === 0) {
+      sebab.push("Latihan Praktikal belum dimulakan (belum ada tarikh sesi ditetapkan)");
+    } else {
+      if (adaDuaPakej(p) && senaraiLp.length < 2) {
+        sebab.push("Latihan Praktikal — satu lagi jenis (Moto/Kereta) belum dimulakan lagi");
+      }
+      senaraiLp.forEach(e => {
+        const lp = e.lp;
+        const label = e.label ? ` — ${e.label}` : "";
+        const adaSesi = !!(lp && lp.senaraiSesi && lp.senaraiSesi.length > 0);
+        const adaQti = !!(lp && lp.qti && lp.qti.tarikh);
+        if (!adaSesi || !adaQti) {
+          sebab.push(`Latihan Praktikal${label} belum lengkap dijadualkan (sesi dan/atau QTI belum ditetapkan)`);
+        } else if (latihanLpBelumSelesai(lp)) {
+          const bilBelum = (lp.senaraiSesi.filter(s => s.status !== "HADIR").length) + (lp.qti.status !== "HADIR" ? 1 : 0);
+          sebab.push(`Latihan Praktikal${label} — masih ada ${bilBelum} sesi/QTI yang belum disahkan HADIR`);
+        }
+      });
+    }
+
+    if (!(p.pembayaran && p.pembayaran.status === "SAH")) {
+      sebab.push(p.pembayaran ? "Bayaran belum disahkan (tekan \"Sahkan Pembayaran\")" : "Bayaran belum direkodkan");
+    }
+
+    return sebab;
+  }
+
   // ---------- TAMBAHAN: Lajur Pakej Lesen (status + button sahkan) ----------
 
   function baris_htmlPakej(p) {
@@ -3468,10 +3666,45 @@
   // Status disimpan terus dalam objek sesi tu sendiri: {tarikh, sesi, status}.
   // "status" === "HADIR" bermakna dah disahkan; takde status = belum hadir lagi.
   //
-  // KEMASKINI (2 PAKEJ): dibahagi 2 — bina_htmlLatihanSeksyen() bina SATU
-  // dropdown (Moto ATAU Kereta; struktur/class/markup SAMA macam asal, cuma
-  // butang tambah data-kunci supaya handler tahu latihan mana), dan
-  // baris_htmlLatihan() (gabung semua seksyen — kekal utk keserasian).
+  // ======================================================================
+  // TAMBAHAN (mockup diluluskan, KEMASKINI ikut maklum balas admin — "papar
+  // semua terus, tak payah sembunyi-sembunyi"): blok "Latihan Praktikal" 2
+  // PERINGKAT — (1) TAJUK (sentiasa nampak: ikon+nama+kiraan hadir+chevron,
+  // KLIK utk buka/tutup) (2) PANEL tersembunyi secara lalai; bila dibuka,
+  // tunjuk SEMUA kad sesi SEKALI GUS (TIADA lagi "4 dulu + Lihat Lagi").
+  // Gantikan popup terapung + skrol lama ("Lihat Sesi (x/y) ▼").
+  //
+  // htmlBlokLatihanTajukPanel() ialah SATU fungsi dikongsi oleh kad pelajar
+  // (bina_htmlLatihanSeksyen di bawah) & kad "Pelajar Didaftar Kaunter"
+  // (kkBlokLatihan()) — rupa+kelakuan tajuk/panel/grid 100% SAMA kat dua-dua
+  // tempat (ikut permintaan admin "buat macam kad pelajar jugak"); pemanggil
+  // masing-masing cuma sediakan senarai HTML kad sesi (semuaItem) ikut
+  // keperluan sendiri (kad pelajar = 1 butang Sahkan je sbb tarikh dah
+  // dibook student app; kad kaunter = 2 butang Pilih Tarikh/Tukar + Sahkan
+  // sbb admin kena tetapkan tarikh sendiri).
+  // ======================================================================
+  function htmlBlokLatihanTajukPanel({ p, kunci, ikonJenis, labelJenis, hadHadirTeks, semuaItem }) {
+    const kunciState = `${p.uid}|${kunci}`;
+    const terbuka = latihanTerbukaSet.has(kunciState);
+
+    const gridHtml = `<div class="sesi-grid">${semuaItem.join("")}</div>`;
+
+    return `
+      <div class="blok-latihan">
+        <button type="button" class="latihan-tajuk${terbuka ? " terbuka" : ""}" data-aksi="toggle-latihan" data-uid="${p.uid}" data-kunci="${kunci}">
+          <i class="fa-solid ${ikonJenis} ikon-jenis"></i>
+          <span class="nama-tajuk">Latihan Praktikal${labelJenis}</span>
+          ${hadHadirTeks ? `<span class="had-hadir">${hadHadirTeks}</span>` : ""}
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </button>
+        <div class="latihan-panel${terbuka ? " terbuka" : ""}">
+          ${gridHtml}
+        </div>
+      </div>`;
+  }
+
+  // KEMASKINI (2 PAKEJ): bina_htmlLatihanSeksyen() bina SATU blok (Moto ATAU
+  // Kereta) guna htmlBlokLatihanTajukPanel() di atas.
   function bina_htmlLatihanSeksyen(p, e) {
     const lp = e ? e.lp : null;
     const kunci = e ? e.kunci : KUNCI_LATIHAN_MOTO;
@@ -3485,53 +3718,52 @@
     if (adaSesi) jumlahBelumHadir += lp.senaraiSesi.filter(s => s.status !== "HADIR").length;
     if (adaQti && lp.qti.status !== "HADIR") jumlahBelumHadir += 1;
 
-    const terbuka = popupLatihanTerbuka === `${p.uid}|${kunci}`;
-
-    let isiPopup = `<div class="sesi-grid">`;
+    const semuaItem = [];
 
     if (adaSesi) {
       lp.senaraiSesi.forEach((s, index) => {
         // sesi yg baru direset jadi {} — takde tarikh => butang Sahkan disabled
         const adaJadualSesi = !!(s && s.tarikh);
         const sudahHadir = adaJadualSesi && s.status === "HADIR";
-        isiPopup += `
-          <div class="sesi-item${adaJadualSesi ? "" : " tiada-jadual"}">
+        semuaItem.push(`
+          <div class="sesi-item${adaJadualSesi ? "" : " tiada-jadual"}${sudahHadir ? " hadir" : ""}">
             <div class="sesi-label">Sesi ${index + 1}${s && s.sesi ? " — " + s.sesi : ""}</div>
             <div class="sesi-tarikh">${adaJadualSesi ? s.tarikh : "-"}<br>${baris_badge(adaJadualSesi ? s.status : null, "HADIR", "Belum Hadir")}</div>
-            ${!adaJadualSesi
+            <div class="sesi-aksi">${!adaJadualSesi
               ? `<button class="btn-sesi" disabled>Sahkan</button>`
               : sudahHadir
-                ? `<button class="btn-sesi" disabled>Sudah hadir</button>`
+                ? `<button class="btn-sesi" disabled><i class="fa-solid fa-check"></i> Sudah Hadir</button>`
                 : `<button class="btn-sesi" data-aksi="sah-sesi-latihan" data-uid="${p.uid}" data-index="${index}" data-kunci="${kunci}">Sahkan</button>`
-            }
-          </div>`;
+            }</div>
+          </div>`);
       });
     }
 
     if (adaQti) {
       const qtiHadir = lp.qti.status === "HADIR";
-      isiPopup += `
-        <div class="sesi-item">
+      semuaItem.push(`
+        <div class="sesi-item${qtiHadir ? " hadir" : ""}">
           <div class="sesi-label">QTI</div>
           <div class="sesi-tarikh">${lp.qti.tarikh || "-"}<br>${baris_badge(lp.qti.status, "HADIR", "Belum Hadir")}</div>
-          ${qtiHadir
-            ? `<button class="btn-sesi qti" disabled>Sudah hadir</button>`
+          <div class="sesi-aksi">${qtiHadir
+            ? `<button class="btn-sesi qti" disabled><i class="fa-solid fa-check"></i> Sudah Hadir</button>`
             : `<button class="btn-sesi qti" data-aksi="sah-qti-latihan" data-uid="${p.uid}" data-kunci="${kunci}">Sahkan</button>`
-          }
-        </div>`;
+          }</div>
+        </div>`);
     }
 
-    isiPopup += `</div>`;
-
-    return `
-      <div class="latihan-dropdown">
-        <button class="btn-sesi-toggle" data-aksi="toggle-latihan" data-uid="${p.uid}" data-kunci="${kunci}">
-          Lihat Sesi (${jumlahItem - jumlahBelumHadir}/${jumlahItem} hadir)<span class="anak-panah">${terbuka ? "▲" : "▼"}</span>
-        </button>
-        <div class="latihan-popup ${terbuka ? "terbuka" : ""}">${isiPopup}</div>
-      </div>`;
+    return htmlBlokLatihanTajukPanel({
+      p, kunci,
+      ikonJenis: kunci === KUNCI_LATIHAN_KERETA ? "fa-car" : "fa-motorcycle",
+      labelJenis: (perluLabelJenis(p) && e && e.label) ? ` — ${e.label}` : "",
+      hadHadirTeks: `${jumlahItem - jumlahBelumHadir}/${jumlahItem} hadir`,
+      semuaItem
+    });
   }
 
+  // NOTA: baris_htmlLatihan() (gabungan SEMUA seksyen jadi SATU string) tak
+  // dipakai di mana-mana (htmlBarisLatihanKad() panggil bina_htmlLatihanSeksyen()
+  // terus, satu-satu) — dikekalkan je sebagai fungsi tak aktif, tak diubah.
   function baris_htmlLatihan(p) {
     const bahagian = senaraiLatihanPelajar(p).map(e => bina_htmlLatihanSeksyen(p, e)).filter(Boolean);
     return bahagian.length ? bahagian.join("") : "—";
@@ -3720,23 +3952,26 @@
     }).join("");
   }
 
-  // KEMASKINI (2 PAKEJ): seksyen Latihan Praktikal dipecah — Moto & Kereta
-  // berasingan (sesi + QTI masing-masing). Pelajar lama = SATU seksyen sahaja.
+  // KEMASKINI (mockup diluluskan): seksyen Latihan Praktikal — Moto & Kereta
+  // berasingan, setiap satu SATU blok "tajuk+panel" lengkap (sendiri ada
+  // ikon/label/kiraan hadir/chevron — lihat htmlBlokLatihanTajukPanel()),
+  // jadi TAK dibungkus lagi dalam .baris-kat/.ikon-kat/.label-kat generik
+  // (yg tu utk baris STATIK macam Pakej/UK/Bayaran — Latihan dah ada rupa
+  // "tajuk" sendiri yg lagi sesuai + boleh klik). kat_statusLatihan() &
+  // .baris-kat-latihan dikekalkan (tak dibuang) tapi dah tak dipanggil dari
+  // sini — redundant drpd ikon-jenis dlm tajuk blok sendiri.
   function htmlBarisLatihanKad(p) {
     const senarai = senaraiLatihanPelajar(p);
     const paparan = senarai.length ? senarai : [{ kunci: KUNCI_LATIHAN_MOTO, label: "", lp: null }];
-    const perluLabel = perluLabelJenis(p);
-    return paparan.map(e => {
-      const label = (perluLabel && e.label) ? `Latihan Praktikal — ${e.label}` : "Latihan Praktikal";
-      const ikon = (perluLabel && e.kunci === KUNCI_LATIHAN_MOTO) ? "fa-motorcycle" : "fa-car";
-      return `<div class="baris-kat baris-kat-latihan">
-              <div class="ikon-kat ikon-${kat_statusLatihan(e.lp)}"><i class="fa-solid ${ikon}"></i></div>
-              <div class="maklumat-kat" style="flex:1"><div class="label-kat">${label}</div><div class="sub-kat">${bina_htmlLatihanSeksyen(p, e) || "—"}</div></div>
-            </div>`;
-    }).join("");
+    return paparan.map(e => bina_htmlLatihanSeksyen(p, e) || "").join("");
   }
 
-  function baris_htmlKad(p) {
+  // KEMASKINI: parameter `tagHtml` opsyenal (default "") — diteruskan terus
+  // ke baris_htmlKepalaKad(p, tagHtml). Tab "Senarai Pelajar" (render() biasa)
+  // TAK berubah langsung (dipanggil tanpa argumen kedua = sama macam asal).
+  // Tab "Selesai" (renderSenaraiSelesai()) je yang hantar ikon sumber
+  // pendaftaran (App/Kaunter) — lihat barisPelajar() & renderSenaraiSelesai().
+  function baris_htmlKad(p, tagHtml = "") {
     // TAMBAHAN: kad ni kini collapse-by-default / expand-on-klik — lihat
     // kadTerbukaSet & CSS .kad-pelajar/.kad-pelajar-toggle/.kad-detail.
     // Header (baris_htmlKepalaKad(p): avatar+nama+id+Maklumat+Cetak, SAMA
@@ -3749,7 +3984,7 @@
     return `
       <div class="kad-pelajar${terbuka ? " terbuka" : ""}" data-uid="${p.uid}">
         <div class="kad-pelajar-atas kad-pelajar-toggle">
-          ${baris_htmlKepalaKad(p)}
+          ${baris_htmlKepalaKad(p, tagHtml)}
           <div class="kad-chevron"><i class="fa-solid fa-chevron-down"></i></div>
         </div>
 
@@ -3788,7 +4023,20 @@
   }
 
   // fungsi sebenar yg digunakan render()
-  function barisPelajar(p) { return baris_htmlKad(p); }
+  // KEMASKINI: `tagHtml` opsyenal diteruskan ke baris_htmlKad() — render()
+  // biasa (tab Senarai Pelajar) panggil TANPA argumen kedua (tak berubah).
+  function barisPelajar(p, tagHtml = "") { return baris_htmlKad(p, tagHtml); }
+
+  // TAMBAHAN: ikon kecil hujung nama — penanda sumber pendaftaran (App vs
+  // Kaunter), dipakai KHUSUS tab "Selesai" (renderSenaraiSelesai()) ikut
+  // permintaan admin: "yg daftar dekat app and selesai...logo phone and yg
+  // daftar kaunter and selesai buat logo kaunter". Guna SEMULA flag
+  // p.daftarKaunter sedia ada (SAMA flag yg dipakai renderSenaraiKaunter()).
+  function tagSumberPendaftaran(p) {
+    return p.daftarKaunter === true
+      ? '<span class="tag-sumber tag-sumber-kaunter" title="Didaftarkan oleh Admin (Kaunter)"><i class="fa-solid fa-cash-register"></i></span>'
+      : '<span class="tag-sumber tag-sumber-app" title="Daftar Sendiri (App)"><i class="fa-solid fa-mobile-screen"></i></span>';
+  }
 
   // ======================================================================
   // TAMBAHAN: SLIP CETAK — laporan status SEORANG pelajar (letterhead),
@@ -4027,6 +4275,13 @@
     // semasa + tarik semula baki tempat terkini (mungkin dah berubah sejak
     // borang dibuka kali terakhir).
     drmCeramahTarikhPilih = null;
+    // KEMASKINI (2 pakej): reset terus di sini jugak (jangan harap semata2
+    // side-effect drmKemaskiniNotaDuaPakej() di atas — defensif, elak data
+    // basi kalau mod dua-pakej "sebelum ni" tak berubah).
+    drmCeramahTarikhPilihMoto = null;
+    drmCeramahTarikhPilihKereta = null;
+    if (drmCeramahJenisWrap) drmCeramahJenisWrap.style.display = "none";
+    drmModeDuaPakejSebelumIni = false;
     drmCeramahBulanTahun = new Date();
     drmUkTarikhPilih = null;
     drmUkSesiPilih = null;
@@ -4124,20 +4379,44 @@
       // kosong — pelajar boleh set/tukar kemudian dari seksyen "Pelajar
       // Didaftar Kaunter" di bawah).
       //
-      // KEMASKINI (Request 2 — 2 pakej): pelajar 2 PAKEJ perlu Ceramah
-      // DIPECAH (ceramahMoto/ceramahKereta, bukan "ceramah" tunggal) — borang
-      // ni cuma ada SATU mini-kalendar Ceramah (tak boleh pilih 2 tarikh utk
-      // 2 jenis sekali), jadi utk pelajar 2 pakej, pilihan Ceramah inline ni
-      // DILANGKAU SENGAJA (admin tetapkan Ceramah Moto & Kereta berasingan
-      // lepas ni dari tab "Pelajar Didaftar Kaunter" — nota #drmNotaDuaPakej
-      // dah makluman perkara ni dlm borang). Ujian Komputer KEKAL boleh
-      // dipilih terus sebab UK tetap TUNGGAL tak kira berapa pakej.
-      if (!duaPakej && drmCeramahTarikhPilih) dataBaru.ceramah = { tarikh: drmCeramahTarikhPilih };
+      // KEMASKINI (2 pakej): pelajar 2 PAKEJ perlu Ceramah DIPECAH
+      // (ceramahMoto/ceramahKereta) — drmBukaPilihJenisCeramah() dlm
+      // kalendar di atas dah bolehkan admin pilih KEDUA-DUA tarikh terus
+      // dlm borang ni (klik tarikh -> pilih Moto/Kereta, ulang utk jenis
+      // lain). Ujian Komputer KEKAL TUNGGAL tak kira berapa pakej.
+      if (duaPakej) {
+        if (drmCeramahTarikhPilihMoto) dataBaru.ceramahMoto = { tarikh: drmCeramahTarikhPilihMoto };
+        if (drmCeramahTarikhPilihKereta) dataBaru.ceramahKereta = { tarikh: drmCeramahTarikhPilihKereta };
+      } else if (drmCeramahTarikhPilih) {
+        dataBaru.ceramah = { tarikh: drmCeramahTarikhPilih };
+      }
       if (drmUkTarikhPilih && drmUkSesiPilih) dataBaru.ujianKomputer = { tarikh: drmUkTarikhPilih, sesi: drmUkSesiPilih };
+
+      // TAMBAHAN: pembayaran kaunter dibayar TUNAI terus kat kaunter (bukan
+      // upload slip macam pelajar app) — kalau ada pakej dipilih (ada
+      // jumlah utk dibayar), sediakan dataBaru.pembayaran berstatus PENDING
+      // drpd awal, supaya baris "Bayaran" terus actionable (admin boleh
+      // "Sahkan Pembayaran" terus di panel lepas daftar, ATAU kemudian dari
+      // tab "Pelajar Didaftar Kaunter" — SAMA butang/fungsi sahkanPembayaran()).
+      if (dataBaru.pakejLesen) {
+        dataBaru.pembayaran = { jumlah: dataBaru.pakejLesen.harga, status: "PENDING" };
+      }
 
       const studentRef = doc(db, "students", uid);
 
-      if (dataBaru.ceramah || dataBaru.ujianKomputer) {
+      // KEMASKINI (2 pakej): kumpul SEMUA tarikh Ceramah yg perlu dibook
+      // ikut TARIKH UNIK — boleh 0 (tiada dipilih), 1 (mod tunggal, ATAU mod
+      // dua tapi admin cuma pilih 1 drpd 2 jenis), atau 2 (mod dua, kedua2
+      // jenis dipilih — MUNGKIN jatuh pd tarikh SAMA, count kena ditambah 2
+      // pada doc slot yg SAMA tu, sebab tu dikumpul ikut tarikh dulu sblm
+      // baca/tulis, bukan 2 get+write berasingan atas snapshot "before" yg sama).
+      const kiraanCeramahPerTarikh = {};
+      if (dataBaru.ceramah) kiraanCeramahPerTarikh[dataBaru.ceramah.tarikh] = (kiraanCeramahPerTarikh[dataBaru.ceramah.tarikh] || 0) + 1;
+      if (dataBaru.ceramahMoto) kiraanCeramahPerTarikh[dataBaru.ceramahMoto.tarikh] = (kiraanCeramahPerTarikh[dataBaru.ceramahMoto.tarikh] || 0) + 1;
+      if (dataBaru.ceramahKereta) kiraanCeramahPerTarikh[dataBaru.ceramahKereta.tarikh] = (kiraanCeramahPerTarikh[dataBaru.ceramahKereta.tarikh] || 0) + 1;
+      const tarikhCeramahUnik = Object.keys(kiraanCeramahPerTarikh);
+
+      if (tarikhCeramahUnik.length > 0 || dataBaru.ujianKomputer) {
         // TAMBAHAN: book slot (dgn had kapasiti DIKUATKUASAKAN betul-betul,
         // bukan cuma tambah count buta) + cipta dokumen pelajar SEKALI dalam
         // SATU transaction — kalau tarikh/sesi tu dah penuh (mungkin org
@@ -4145,21 +4424,23 @@
         // dokumen pelajar TAK dicipta langsung (bukan separuh jalan).
         //
         // Peraturan transaction Firestore: SEMUA get() kena jalan dulu
-        // sebelum apa-apa update()/set() — sebab tu baca+semak DUA slot
-        // (kalau ada) siap dulu, baru lepas tu tulis semua sekali.
+        // sebelum apa-apa update()/set() — sebab tu baca+semak slot (kalau
+        // ada) siap dulu, baru lepas tu tulis semua sekali.
         await runTransaction(db, async (transaction) => {
-          let ceramahRef = null, ceramahWujud = false, ceramahKiraan = 0;
-          let ukRef = null, ukWujud = false, ukKiraan = 0;
-
-          if (dataBaru.ceramah) {
-            ceramahRef = slotRefCeramah(dataBaru.ceramah.tarikh);
-            const snap = await transaction.get(ceramahRef);
-            ceramahWujud = snap.exists();
-            ceramahKiraan = ceramahWujud ? (snap.data().count || 0) : 0;
-            if (ceramahKiraan >= HAD_CERAMAH_SEHARI) {
-              throw new Error(`Tarikh Ceramah ${dataBaru.ceramah.tarikh} dah penuh (${HAD_CERAMAH_SEHARI} tempat). Sila pilih tarikh lain.`);
+          const infoCeramahIkutTarikh = {};
+          for (const tarikh of tarikhCeramahUnik) {
+            const ref = slotRefCeramah(tarikh);
+            const snap = await transaction.get(ref);
+            const wujud = snap.exists();
+            const kiraanSedia = wujud ? (snap.data().count || 0) : 0;
+            const tambah = kiraanCeramahPerTarikh[tarikh];
+            if (kiraanSedia + tambah > HAD_CERAMAH_SEHARI) {
+              throw new Error(`Tarikh Ceramah ${tarikh} tak cukup tempat (baki ${Math.max(0, HAD_CERAMAH_SEHARI - kiraanSedia)}, perlu ${tambah}). Sila pilih tarikh lain.`);
             }
+            infoCeramahIkutTarikh[tarikh] = { ref, wujud, kiraanSedia, tambah };
           }
+
+          let ukRef = null, ukWujud = false, ukKiraan = 0;
           if (dataBaru.ujianKomputer) {
             ukRef = slotRefUK(dataBaru.ujianKomputer.tarikh, dataBaru.ujianKomputer.sesi);
             const snap = await transaction.get(ukRef);
@@ -4171,9 +4452,10 @@
           }
 
           // Semua get() dah selesai di atas — ini bahagian TULIS sahaja.
-          if (ceramahRef) {
-            if (ceramahWujud) transaction.update(ceramahRef, { count: ceramahKiraan + 1 });
-            else transaction.set(ceramahRef, { count: 1 });
+          for (const tarikh of tarikhCeramahUnik) {
+            const info = infoCeramahIkutTarikh[tarikh];
+            if (info.wujud) transaction.update(info.ref, { count: info.kiraanSedia + info.tambah });
+            else transaction.set(info.ref, { count: info.tambah });
           }
           if (ukRef) {
             if (ukWujud) transaction.update(ukRef, { count: ukKiraan + 1 });
@@ -4188,7 +4470,9 @@
       try { await signOut(authKedua); } catch (eSignOut) { /* abaikan */ }
       try { await deleteApp(appKedua); } catch (eDel) { /* abaikan */ }
 
-      drmDataLepasDaftar = { nama, noKP, noTel, alamat, pakejLesen: dataBaru.pakejLesen || null, emel, password };
+      // KEMASKINI: +uid & +pembayaran (perlu utk panel "Sahkan Pembayaran
+      // (Tunai)" lepas daftar — lihat drmKemaskiniPanelBayaranLepasDaftar()).
+      drmDataLepasDaftar = { uid, nama, noKP, noTel, alamat, pakejLesen: dataBaru.pakejLesen || null, pembayaran: dataBaru.pembayaran || null, emel, password };
 
       drmSlipRingkas.innerHTML = `
         <div class="baris"><span class="label">Nama</span><span class="nilai">${nama}</span></div>
@@ -4200,6 +4484,7 @@
 
       drmBorang.classList.remove("tunjuk");
       drmPanelJaya.classList.add("tunjuk");
+      drmKemaskiniPanelBayaranLepasDaftar(); // TAMBAHAN: tunjuk/sembunyi butang "Sahkan Pembayaran (Tunai)"
     } catch (err) {
       // TAMBAHAN: kalau akaun Auth SUDAH dicipta (cred wujud) tapi dokumen
       // pelajar GAGAL disimpan (cth: slot Ceramah/UK dah penuh masa
@@ -4357,14 +4642,56 @@
     return `${String(hari).padStart(2, "0")}/${String(bulan + 1).padStart(2, "0")}/${tahun}`;
   }
 
+  // KEMASKINI (2 pakej): bila drmModeDuaPakej(), papar DUA tarikh (Moto &
+  // Kereta) berasingan, bukan SATU drmCeramahTarikhPilih.
   function drmKemaskiniTeksPilihan() {
-    drmCeramahPilihanTeks.textContent = drmCeramahTarikhPilih ? `Dipilih: ${drmCeramahTarikhPilih}` : "Belum pilih tarikh";
+    if (drmModeDuaPakej()) {
+      const m = drmCeramahTarikhPilihMoto ? `Moto: ${drmCeramahTarikhPilihMoto}` : "Moto: belum pilih";
+      const k = drmCeramahTarikhPilihKereta ? `Kereta: ${drmCeramahTarikhPilihKereta}` : "Kereta: belum pilih";
+      drmCeramahPilihanTeks.textContent = `${m}  |  ${k}`;
+    } else {
+      drmCeramahPilihanTeks.textContent = drmCeramahTarikhPilih ? `Dipilih: ${drmCeramahTarikhPilih}` : "Belum pilih tarikh";
+    }
     drmUkPilihanTeks.textContent = (drmUkTarikhPilih && drmUkSesiPilih) ? `Dipilih: ${drmUkTarikhPilih} — ${drmUkSesiPilih}` : "Belum pilih tarikh & sesi";
   }
 
   // ---------- Kalendar Ceramah (Selasa & Sabtu sahaja, 30 tempat/hari) ----------
   let drmCeramahBulanTahun = new Date();
-  let drmCeramahTarikhPilih = null; // "dd/mm/yyyy" | null
+  let drmCeramahTarikhPilih = null; // "dd/mm/yyyy" | null — mod SATU pakej (atau tiada)
+  // KEMASKINI (2 pakej): mod DUA pakej guna DUA tarikh berasingan ni, bukan
+  // drmCeramahTarikhPilih di atas (yg dibiar null dlm mod dua).
+  let drmCeramahTarikhPilihMoto = null;
+  let drmCeramahTarikhPilihKereta = null;
+
+  // TAMBAHAN (2 pakej): sub-paparan "tarikh ni utk Moto atau Kereta?" —
+  // dipanggil bila admin klik satu tarikh dlm grid SEMASA mod dua pakej.
+  // Sama pattern kkPilihTarikhUKModal (sub-pick sblm komit ke state tempatan;
+  // tarikh ni baru betul2 ditulis Firestore lepas drmBtnDaftar diklik,
+  // SAMA macam mod tunggal — TIADA write terus dr sini).
+  function drmBukaPilihJenisCeramah(tarikhStr) {
+    if (!drmCeramahJenisWrap) return;
+    drmCeramahJenisWrap.style.display = "block";
+    drmCeramahJenisTarikhTeks.textContent = tarikhStr;
+    drmCeramahJenisBtnWrap.innerHTML = `
+      <button type="button" class="drmkal-sesi-btn ${drmCeramahTarikhPilihMoto === tarikhStr ? "drmkal-dipilih" : ""}" data-jenis="MOTO">
+        <div class="drmkal-sesi-nama"><i class="fa-solid fa-motorcycle"></i> Motosikal</div>
+        <div class="drmkal-sesi-baki">${drmCeramahTarikhPilihMoto ? "Skrg: " + drmCeramahTarikhPilihMoto : "Belum pilih"}</div>
+      </button>
+      <button type="button" class="drmkal-sesi-btn ${drmCeramahTarikhPilihKereta === tarikhStr ? "drmkal-dipilih" : ""}" data-jenis="KERETA">
+        <div class="drmkal-sesi-nama"><i class="fa-solid fa-car"></i> Kereta</div>
+        <div class="drmkal-sesi-baki">${drmCeramahTarikhPilihKereta ? "Skrg: " + drmCeramahTarikhPilihKereta : "Belum pilih"}</div>
+      </button>
+    `;
+    drmCeramahJenisBtnWrap.querySelectorAll("[data-jenis]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.jenis === "MOTO") drmCeramahTarikhPilihMoto = tarikhStr;
+        else drmCeramahTarikhPilihKereta = tarikhStr;
+        drmCeramahJenisWrap.style.display = "none";
+        drmRenderCeramahGrid();
+        drmKemaskiniTeksPilihan();
+      });
+    });
+  }
 
   async function drmRenderCeramahGrid() {
     const tahun = drmCeramahBulanTahun.getFullYear();
@@ -4407,17 +4734,34 @@
       let kelas = "";
       if (baki <= 0) kelas = "drmkal-penuh";
       else if (baki <= 5) kelas = "drmkal-sikit";
-      if (drmCeramahTarikhPilih === tarikhStr) kelas += " drmkal-dipilih";
+      // KEMASKINI (2 pakej): mod dua pakej -> tanda tarikh yg dah dipilih utk
+      // Moto dan/atau Kereta dgn tag kecil "M"/"K" (boleh 2 serentak kalau
+      // admin letak Moto & Kereta pd tarikh SAMA — tempat tetap dikira
+      // GABUNGAN, lihat daftarPelajarKaunter()). Mod tunggal kekal SAMA.
+      let tagJenis = "";
+      if (drmModeDuaPakej()) {
+        const adaMoto = drmCeramahTarikhPilihMoto === tarikhStr;
+        const adaKereta = drmCeramahTarikhPilihKereta === tarikhStr;
+        if (adaMoto || adaKereta) kelas += " drmkal-dipilih";
+        if (adaMoto) tagJenis += "M";
+        if (adaKereta) tagJenis += (tagJenis ? "+K" : "K");
+      } else if (drmCeramahTarikhPilih === tarikhStr) {
+        kelas += " drmkal-dipilih";
+      }
       html += `<button type="button" class="drmkal-sel ${kelas}" data-tarikh="${tarikhStr}" ${baki <= 0 ? "disabled" : ""}>
-        <span class="drmkal-angka">${d}</span><span class="drmkal-baki">${baki <= 0 ? "Penuh" : baki + "/" + HAD_CERAMAH_SEHARI}</span>
+        <span class="drmkal-angka">${d}</span><span class="drmkal-baki">${baki <= 0 ? "Penuh" : baki + "/" + HAD_CERAMAH_SEHARI}</span>${tagJenis ? `<span class="drmkal-tag-jenis">${tagJenis}</span>` : ""}
       </button>`;
     }
     drmCeramahGrid.innerHTML = html;
     drmCeramahGrid.querySelectorAll("[data-tarikh]").forEach(btn => {
       btn.addEventListener("click", () => {
-        drmCeramahTarikhPilih = btn.dataset.tarikh;
-        drmRenderCeramahGrid();
-        drmKemaskiniTeksPilihan();
+        if (drmModeDuaPakej()) {
+          drmBukaPilihJenisCeramah(btn.dataset.tarikh);
+        } else {
+          drmCeramahTarikhPilih = btn.dataset.tarikh;
+          drmRenderCeramahGrid();
+          drmKemaskiniTeksPilihan();
+        }
       });
     });
   }
@@ -4588,6 +4932,35 @@
     }, 1000);
   }
 
+  // TAMBAHAN: tunjuk/sembunyi + kemaskini panel "Sahkan Pembayaran (Tunai)"
+  // dlm panel berjaya daftar — ikut drmDataLepasDaftar.pembayaran semasa.
+  function drmKemaskiniPanelBayaranLepasDaftar() {
+    if (!drmPanelBayaranLepasDaftar) return;
+    const d = drmDataLepasDaftar;
+    if (!d || !d.pembayaran) {
+      drmPanelBayaranLepasDaftar.style.display = "none";
+      return;
+    }
+    drmPanelBayaranLepasDaftar.style.display = "";
+    const sudahSah = d.pembayaran.status === "SAH";
+    drmNotaBayaranLepasDaftar.innerHTML = `<i class="fa-solid fa-circle-info"></i> Jumlah bayaran (Pakej: ${d.pakejLesen ? d.pakejLesen.nama : "-"}): <b>${d.pembayaran.jumlah}</b>${sudahSah ? ' — <span style="color:var(--hijau); font-weight:700;">Sudah disahkan ✓</span>' : ""}`;
+    drmBtnSahBayaranLepasDaftar.disabled = sudahSah;
+    drmBtnSahBayaranLepasDaftar.innerHTML = sudahSah
+      ? `<i class="fa-solid fa-check"></i> Pembayaran Disahkan`
+      : `<i class="fa-solid fa-money-bill-wave"></i> Sahkan Pembayaran (Tunai) Diterima`;
+  }
+  if (drmBtnSahBayaranLepasDaftar) {
+    drmBtnSahBayaranLepasDaftar.addEventListener("click", async () => {
+      if (!drmDataLepasDaftar || !drmDataLepasDaftar.uid) return;
+      // KEMASKINI: guna SEMULA EXACT sahkanPembayaran() yg sama dgn tab
+      // Senarai Pelajar/Kaunter (kini pulangkan true/false ikut berjaya ke
+      // tidak, supaya panel ni tahu bila nak tukar rupa butang).
+      const berjaya = await sahkanPembayaran(drmDataLepasDaftar.uid);
+      if (berjaya && drmDataLepasDaftar.pembayaran) drmDataLepasDaftar.pembayaran.status = "SAH";
+      drmKemaskiniPanelBayaranLepasDaftar();
+    });
+  }
+
   drmBtnJana.addEventListener("click", janaPasswordDaftar);
   drmBtnSalin.addEventListener("click", salinPasswordDaftar);
   drmBtnBatal.addEventListener("click", resetBorangDaftar);
@@ -4595,6 +4968,7 @@
   drmBtnDaftarLagi.addEventListener("click", () => {
     resetBorangDaftar();
     drmDataLepasDaftar = null;
+    drmKemaskiniPanelBayaranLepasDaftar();
     drmPanelJaya.classList.remove("tunjuk");
     drmBorang.classList.add("tunjuk");
   });
@@ -4603,6 +4977,7 @@
   drmBtnSelesai.addEventListener("click", () => {
     resetBorangDaftar();
     drmDataLepasDaftar = null;
+    drmKemaskiniPanelBayaranLepasDaftar();
     drmPanelJaya.classList.remove("tunjuk");
     drmBorang.classList.add("tunjuk");
   });
@@ -4686,11 +5061,17 @@
     </div>`;
   }
 
-  // KEMASKINI (2 PAKEJ): seksyen Latihan Praktikal kaunter dipecah Moto/
-  // Kereta (senaraiLatihanPelajar(p)), bilangan baris sesi ikut
-  // KOLEKSI_LATIHAN[kunci].jumlahSesiLalai (Moto=7, Kereta=9) — bukan "8"
-  // hardcode asal (yg memang silap utk Kereta). "Sesi terakhir" (index =
-  // jumlahSesiLalai-1) yg memicu auto-QTI pun ikut nombor ni per kunci.
+  // KEMASKINI (mockup diluluskan, "buat macam kad pelajar jugak"): seksyen
+  // Latihan Praktikal kaunter kini guna SATU fungsi SAMA dgn kad pelajar
+  // biasa (htmlBlokLatihanTajukPanel() — tajuk klik + panel 4-terus/Lihat
+  // Lagi), bukan senarai baris .kk-baris lama. Beza DUA butang (bukan
+  // satu) tiap kad sesi — "Pilih Tarikh"/"Tukar" (kk-btn-pilih, EXACT
+  // class/data-kk-* sedia ada, wiring di renderSenaraiKaunter() TAK
+  // disentuh) + Sahkan (kkBtnSahSesi/kkBtnSahQti, EXACT fungsi sedia ada
+  // TAK diubah) — sbb admin kaunter kena TETAPKAN tarikh sendiri (beza dgn
+  // kad pelajar app yg cuma SAHKAN tarikh yg student dah book).
+  // Bilangan sesi kekal ikut KOLEKSI_LATIHAN[kunci].jumlahSesiLalai (Moto=7,
+  // Kereta=10) — "sesi terakhir" yg memicu auto-QTI pun ikut nombor ni.
   function kkBlokLatihan(p, e) {
     const kunci = e.kunci;
     const lp = e.lp || {};
@@ -4701,39 +5082,58 @@
     const ikonJenis = kunci === KUNCI_LATIHAN_KERETA ? "fa-car" : "fa-motorcycle";
 
     const bolehLatihan = ceramahHadir(p) && ukSudahSah(p);
-    let htmlSesi;
+
+    // Terkunci (Ceramah/UK belum sah) — kekal SATU blok tajuk+panel, cuma
+    // isi panel tukar jadi nota kunci (SAMA mesej/syarat macam asal).
     if (!bolehLatihan) {
-      htmlSesi = `<div class="kk-baris" style="border:none;padding-top:0;">
-        <span class="lock-note">🔒 Latihan Praktikal (termasuk QTI) terkunci — Ceramah kena disahkan HADIR &amp; Ujian Komputer kena disahkan SAH dulu</span>
-      </div>`;
-    } else {
-      htmlSesi = "";
-      for (let i = 0; i < jumlahSesiLalai; i++) {
-        const s = senaraiSesi[i] || {};
-        htmlSesi += `
-          <div class="kk-baris">
-            <span class="kk-label-sesi">Sesi ${i + 1}</span>
-            <span class="kk-nilai-tarikh${s.tarikh ? "" : " kosong"}">${s.tarikh || "Belum dipilih"}</span>
-            <span class="kk-nilai-tarikh${s.sesi ? "" : " kosong"}">${s.sesi ? s.sesi + formatWaktuSesiLabel(s.sesi) : "Belum pilih sesi"}</span>
+      const kunciState = `${p.uid}|${kunci}`;
+      const terbuka = latihanTerbukaSet.has(kunciState);
+      return `
+        <div class="blok-latihan">
+          <button type="button" class="latihan-tajuk${terbuka ? " terbuka" : ""}" data-aksi="toggle-latihan" data-uid="${p.uid}" data-kunci="${kunci}">
+            <i class="fa-solid ${ikonJenis} ikon-jenis"></i>
+            <span class="nama-tajuk">Latihan Praktikal${labelJenis}</span>
+            <i class="fa-solid fa-lock" style="color:var(--teks-lembut); font-size:11px; margin-left:auto;"></i>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </button>
+          <div class="latihan-panel${terbuka ? " terbuka" : ""}">
+            <div class="kk-baris" style="border:none;padding-top:0;">
+              <span class="lock-note">🔒 Latihan Praktikal (termasuk QTI) terkunci — Ceramah kena disahkan HADIR &amp; Ujian Komputer kena disahkan SAH dulu</span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    const semuaItem = [];
+    let jumlahHadir = 0;
+    for (let i = 0; i < jumlahSesiLalai; i++) {
+      const s = senaraiSesi[i] || {};
+      const sudahHadir = !!(s.tarikh && s.status === "HADIR");
+      if (sudahHadir) jumlahHadir++;
+      semuaItem.push(`
+        <div class="sesi-item${s.tarikh ? "" : " tiada-jadual"}${sudahHadir ? " hadir" : ""}">
+          <div class="sesi-label">Sesi ${i + 1}</div>
+          <div class="sesi-tarikh${s.tarikh ? "" : " kosong"}">${s.tarikh ? `${s.tarikh}<br>${s.sesi ? s.sesi + formatWaktuSesiLabel(s.sesi) : "Belum pilih sesi"}` : "Belum dipilih"}</div>
+          <div class="sesi-aksi">
             <button type="button" class="kk-btn-pilih" data-kk-jenis="latihan" data-kk-uid="${p.uid}" data-kk-index="${i}" data-kk-kunci="${kunci}"><i class="fa-solid fa-calendar-days"></i> ${s.tarikh ? "Tukar" : "Pilih Tarikh"}</button>
             ${kkBtnSahSesi(p, i, kunci)}
           </div>
-        `;
-      }
-      htmlSesi += `
-        <div class="kk-baris">
-          <span class="kk-label-sesi">QTI</span>
-          <span class="kk-nilai-tarikh${qti.tarikh ? "" : " kosong"}">${qti.tarikh ? `${qti.tarikh} — ${formatMasaQtiTeks(qti.masa)} (Auto)` : `Auto — lepas Sesi ${jumlahSesiLalai} ditetapkan`}</span>
-          ${kkBtnSahQti(p, kunci)}
-        </div>
-      `;
+        </div>`);
     }
+    const qtiHadir = qti.status === "HADIR";
+    if (qtiHadir) jumlahHadir++;
+    semuaItem.push(`
+      <div class="sesi-item${qti.tarikh ? "" : " tiada-jadual"}${qtiHadir ? " hadir" : ""}">
+        <div class="sesi-label">QTI</div>
+        <div class="sesi-tarikh${qti.tarikh ? "" : " kosong"}">${qti.tarikh ? `${qti.tarikh}<br>${formatMasaQtiTeks(qti.masa)} (Auto)` : `Auto — lepas Sesi ${jumlahSesiLalai}`}</div>
+        <div class="sesi-aksi">${kkBtnSahQti(p, kunci)}</div>
+      </div>`);
 
-    return `
-      <div class="kk-blok">
-        <h4><i class="fa-solid ${ikonJenis}"></i> Latihan Praktikal${labelJenis} (${jumlahSesiLalai} Sesi + QTI)</h4>
-        ${htmlSesi}
-      </div>`;
+    return htmlBlokLatihanTajukPanel({
+      p, kunci, ikonJenis, labelJenis,
+      hadHadirTeks: `${jumlahHadir}/${jumlahSesiLalai + 1} hadir`,
+      semuaItem
+    });
   }
 
   // ----------------------------------------------------------------------
@@ -4781,6 +5181,19 @@
         </div>
 
         <div class="kad-detail">
+          <!-- TAMBAHAN: nota diagnostik — kenapa pelajar ni MASIH dalam
+               senarai aktif kaunter (belum pindah ke tab "Selesai"). Guna
+               SEMULA EXACT predikat pelajarSudahSelesai() (senaraiSebabBelumSelesai()
+               cuma "explain" predikat tu baris demi baris) — jawapan terus
+               kat kad, admin tak payah teka/tanya kenapa pelajar yg nampak
+               macam "dah settle" tu masih tersenarai kat sini. -->
+          ${(() => {
+            const sebab = senaraiSebabBelumSelesai(p);
+            return sebab.length ? `<div class="nota-belum-selesai">
+              <div class="nota-tajuk"><i class="fa-solid fa-circle-exclamation"></i> Belum masuk tab "Selesai" sebab:</div>
+              <ul>${sebab.map(s => `<li>${s}</li>`).join("")}</ul>
+            </div>` : "";
+          })()}
           <div class="senarai-kategori">
             <div class="baris-kat">
               <div class="ikon-kat ikon-${kat_statusPakej(p)}"><i class="fa-solid fa-id-card"></i></div>
@@ -4820,7 +5233,16 @@
     // pelajar tu terus muncul dalam tab "Selesai" (renderSenaraiSelesai(),
     // yg tapis senaraiPelajar penuh tanpa kira daftarKaunter, jadi TIADA
     // perubahan diperlukan kat sana).
-    const senaraiKaunter = urutIkutNama(senaraiPelajar.filter(p => p.daftarKaunter === true && !pelajarSudahSelesai(p)));
+    // TAMBAHAN: carian nama/no.KP (#kkCarian) — SAMA pattern dgn #carian tab
+    // Senarai Pelajar, digabung (bukan ganti) dgn tapisan daftarKaunter/belum-selesai.
+    const kataKunciKk = kkCarianEl ? kkCarianEl.value.trim().toLowerCase() : "";
+    const senaraiKaunter = urutIkutNama(senaraiPelajar.filter(p => {
+      if (!(p.daftarKaunter === true && !pelajarSudahSelesai(p))) return false;
+      if (!kataKunciKk) return true;
+      const nama = (p.nama || "").toLowerCase();
+      const noKP = (p.noKP || "").toLowerCase();
+      return nama.includes(kataKunciKk) || noKP.includes(kataKunciKk);
+    }));
     if (kkKiraanEl) kkKiraanEl.textContent = senaraiKaunter.length;
     // TAMBAHAN: badge kiraan kat nav sidebar jugak (tab "Pelajar Didaftar Kaunter" dah berasingan drpd "Daftar Memandu")
     const navBadgeKaunterEl = document.getElementById("navBadgeKaunter");
@@ -5285,14 +5707,21 @@
     }
   }
 
+  // KEMASKINI: pulangkan true/false ikut berjaya ke tidak (admin batal
+  // confirm() / ralat write) — dipakai oleh panel "Sahkan Pembayaran
+  // (Tunai)" lepas daftar (Daftar Memandu) utk tahu bila nak tukar rupa
+  // butang. Pemanggil sedia ada (wireKadPelajarEvents dll) tak kesan apa2
+  // sebab semua TAK guna nilai pulangan ni (abaikan macam biasa).
   async function sahkanPembayaran(uid) {
-    if (!confirm("Sahkan pembayaran pelajar ni sudah diterima?")) return;
+    if (!confirm("Sahkan pembayaran pelajar ni sudah diterima?")) return false;
     try {
       await updateDoc(doc(db, "students", uid), {
         "pembayaran.status": "SAH"
       });
+      return true;
     } catch (err) {
       tunjukToast("Gagal sahkan: " + err.message, "error");
+      return false;
     }
   }
 
