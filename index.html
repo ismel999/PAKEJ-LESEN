@@ -6391,6 +6391,23 @@
     }
   }
 
+  // TAMBAHAN: notis "RESET_TARIKH" — admin reset tarikh terus (butang ↺ Reset Tarikh /
+  // Reset Semua) tanpa permintaan pelajar. Server Render hantar push FCM dari dokumen ni.
+  async function hantarNotifikasiResetTarikh(uid, { kategori, jenisPakej = "", mesej }) {
+    try {
+      await addDoc(collection(db, "students", uid, "notifikasi"), {
+        jenis: "RESET_TARIKH",
+        kategori,    // "CERAMAH" | "UJIAN_KOMPUTER" | "LATIHAN_MEMANDU" | "SEMUA"
+        jenisPakej,  // "MOTO" | "KERETA" | ""
+        mesej,
+        dibaca: false,
+        dicipta: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Gagal hantar notifikasi reset tarikh:", err);
+    }
+  }
+
   async function tandaTakHadirCeramah(uid, kunci = "ceramah") {
     const p = senaraiPelajar.find(x => x.uid === uid);
     const c = p ? p[kunci] : null;
@@ -6722,6 +6739,8 @@
 
     try {
       await _resetTarikhCeramahTanpaKonfirmasi(uid, kunci);
+      hantarNotifikasiResetTarikh(uid, { kategori: "CERAMAH", jenisPakej: jenisDariKunci(kunci),
+        mesej: `Tarikh Ceramah Undang-Undang${labelJenis ? " (" + labelJenis + ")" : ""} anda telah direset oleh admin. Sila pilih tarikh baharu di app.` });
       tunjukToast("Tarikh Ceramah dah direset. Pelajar boleh pilih tarikh baru dari app.", "success");
     } catch (err) {
       tunjukToast("Gagal reset: " + err.message + "\n\n(Semak Firestore Rules & format docId ceramah_slots.)", "error");
@@ -6768,6 +6787,8 @@
 
     try {
       await _resetTarikhUjianKomputerTanpaKonfirmasi(uid);
+      hantarNotifikasiResetTarikh(uid, { kategori: "UJIAN_KOMPUTER",
+        mesej: "Tarikh Ujian Komputer anda telah direset oleh admin. Sila pilih tarikh baharu di app." });
       tunjukToast("Tarikh Ujian Komputer dah direset. Pelajar boleh pilih tarikh baru dari app.", "success");
     } catch (err) {
       tunjukToast("Gagal reset: " + err.message + "\n\n(Semak sama ada Firestore Rules bagi admin akses tulis kat collection ujian_komputer_slots, dan sama ada docId slot format tu betul.)", "error");
@@ -6833,6 +6854,9 @@
 
     try {
       await _resetTarikhLatihanPraktikalTanpaKonfirmasi(uid, kunci);
+      hantarNotifikasiResetTarikh(uid, { kategori: "LATIHAN_MEMANDU",
+        jenisPakej: kunci === KUNCI_LATIHAN_KERETA ? "KERETA" : "MOTO",
+        mesej: `Jadual Latihan Memandu (${labelJenis}) anda telah direset oleh admin. Sila pilih tarikh baharu di app.` });
       tunjukToast("Jadual Latihan Praktikal dah direset. Pelajar boleh book semula dari app.", "success");
     } catch (err) {
       tunjukToast("Gagal reset: " + err.message + `\n\n(Semak Firestore Rules utk ${KOLEKSI_LATIHAN[kunci].sesi} & ${KOLEKSI_LATIHAN[kunci].qti}, dan confirm format docId betul.)`, "error");
@@ -6916,6 +6940,9 @@
 
     try {
       await _resetSatuSesiLatihanTanpaKonfirmasi(uid, index, kunci);
+      hantarNotifikasiResetTarikh(uid, { kategori: "LATIHAN_MEMANDU",
+        jenisPakej: kunci === KUNCI_LATIHAN_KERETA ? "KERETA" : "MOTO",
+        mesej: `Tarikh Sesi ${index + 1} latihan memandu anda telah direset oleh admin. Sila pilih tarikh baharu di app.` });
       tunjukToast(`Sesi ${index + 1} dah direset. Pelajar boleh pilih tarikh baru untuk sesi ni dari app.`, "success");
     } catch (err) {
       tunjukToast("Gagal reset sesi: " + err.message + `\n\n(Semak Firestore Rules & format docId ${KOLEKSI_LATIHAN[kunci].sesi}.)`, "error");
@@ -6990,6 +7017,9 @@
 
     try {
       await _resetQtiLatihanTanpaKonfirmasi(uid, kunci);
+      hantarNotifikasiResetTarikh(uid, { kategori: "LATIHAN_MEMANDU",
+        jenisPakej: kunci === KUNCI_LATIHAN_KERETA ? "KERETA" : "MOTO",
+        mesej: "Tarikh QTI anda telah direset oleh admin. Sila semak jadual baharu di app." });
       tunjukToast("Tarikh QTI dah direset. Pelajar boleh pilih tarikh baru dari app.", "success");
     } catch (err) {
       tunjukToast("Gagal reset QTI: " + err.message + `\n\n(Semak Firestore Rules & format docId ${KOLEKSI_LATIHAN[kunci].qti}.)`, "error");
@@ -7106,6 +7136,10 @@
       let mesejAkhir = "";
       if (kejayaan.length > 0) mesejAkhir += `Berjaya direset: ${kejayaan.join(", ")}.`;
       if (kegagalan.length > 0) mesejAkhir += `${mesejAkhir ? "\n" : ""}Gagal direset: ${kegagalan.join(", ")}.`;
+      if (kejayaan.length > 0) {
+        hantarNotifikasiResetTarikh(uid, { kategori: "SEMUA",
+          mesej: "Jadual anda telah direset oleh admin. Sila pilih tarikh baharu di app." });
+      }
       tunjukToast(mesejAkhir, "info");
     } finally {
       // Nota: dalam keadaan normal, onSnapshot listener dah re-render tbody
