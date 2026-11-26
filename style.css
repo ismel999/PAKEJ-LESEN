@@ -1,0 +1,1578 @@
+:root {
+  /* ===== palet jenama oren (baharu) ===== */
+  --oren: #F5821F;
+  --oren-gelap: #D35400;
+  --oren-muda: #FFF1E3;
+  --hijau: #1E8E5A;
+  --hijau-muda: #E5F7EE;
+  --kuning: #B7791F;
+  --kuning-muda: #FFF6DE;
+  --merah: #C0392B;
+  --merah-muda: #FDEAEA;
+  --bg: #F5F6F8;
+  --kad: #FFFFFF;
+  --teks: #2A2D34;
+  --teks-lembut: #7A7F8A;
+  --garis: #ECEEF1;
+
+  /* ===== alias nama pembolehubah lama (dikekalkan sebab dirujuk terus
+     dalam kod skrip modul di bawah — JANGAN buang, cuma tukar nilai) ===== */
+  --kelabu: var(--teks-lembut);
+  --pending: var(--kuning);
+  --biru: var(--oren-gelap);
+  --ungu: var(--oren-gelap);
+  --kuning-bg: var(--kuning-muda);
+  --kuning-border: #F0DE8A;
+  --kuning-teks: #7A5D00;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--teks);
+}
+
+/* ===== header ===== */
+header {
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff;
+  padding: 18px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgba(211,84,0,0.25);
+}
+.logo-wrap { display: flex; align-items: center; gap: 12px; }
+.logo-bulat {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 19px; flex-shrink: 0;
+}
+header h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
+header p { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
+.admin-chip {
+  font-size: 12px;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 20px;
+  display: flex; align-items: center; gap: 7px;
+  font-weight: 500;
+}
+#btnLogout {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+#btnLogout:hover { background: rgba(255,255,255,0.28); }
+
+main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ===== kad ringkasan (summary stat cards) ===== */
+.ringkasan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.ringkasan:empty { display: none; }
+.kad-ringkasan {
+  background: var(--kad);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid var(--garis);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+.kad-ringkasan:hover { border-color: var(--oren); box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+.kad-ringkasan:active { transform: scale(0.98); }
+/* TAMBAHAN: kad yang mewakili tapisan SEDANG aktif (klik kad ringkasan) */
+.kad-ringkasan.aktif {
+  border-color: var(--oren);
+  background: var(--oren-muda);
+  box-shadow: 0 0 0 2px rgba(245,130,31,0.25);
+}
+.ikon-bulat {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ikon-oren { background: var(--oren-muda); color: var(--oren-gelap); }
+.ikon-hijau { background: var(--hijau-muda); color: var(--hijau); }
+.ikon-kuning { background: var(--kuning-muda); color: var(--kuning); }
+.ikon-merah { background: var(--merah-muda); color: var(--merah); }
+.kad-ringkasan .angka { font-size: 21px; font-weight: 800; line-height: 1.1; color: var(--teks); }
+.kad-ringkasan .label { font-size: 12px; color: var(--teks-lembut); font-weight: 500; margin-top: 2px; }
+.ringkasan b { color: var(--teks); }
+
+/* ======================================================================
+   TAMBAHAN: wrapper melekit (sticky) utk toolbar dalam tab Senarai
+   Pelajar — melekit di bawah .topbar (yang dah sticky top:0 sedia ada),
+   supaya kekal kelihatan semasa senarai kad pelajar diskrol. `top`
+   disamakan dgn tinggi sebenar .topbar (diukur/disahkan) supaya tiada
+   pertindihan. Background pepejal (var(--bg), sama warna latar main)
+   diperlukan supaya kad yang skrol lalu tak nampak lutsinar menembusi
+   kawasan ni.
+   PEMBAIKAN (senarai kad ganti table): replika skrol mendatar
+   (.skrol-atas-wrap/#skrolAtasSpacer) yang dulu duduk sini dah DIBUANG —
+   ia cuma perlu bila ada table lebar yang skrol mendatar; senarai
+   .kad-pelajar sekarang susun menegak & responsif, tiada lagi skrol
+   mendatar utk dibuat replika. ====================================== */
+.senarai-atas-melekit {
+  position: sticky;
+  top: 67px;
+  z-index: 4;
+  background: var(--bg);
+  padding-top: 4px;
+  padding-bottom: 6px; /* jarak selamat elak pertindihan sub-piksel dgn senarai kad kat bawah */
+  margin-left: -28px; margin-right: -28px; padding-left: 28px; padding-right: 28px;
+}
+
+/* ===== toolbar ===== */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.cari-wrap {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--kad);
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  padding: 10px 14px;
+  width: 280px;
+  max-width: 100%;
+}
+.cari-wrap i { color: var(--teks-lembut); font-size: 13px; }
+.cari-wrap input, .toolbar input {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  width: 100%;
+  background: transparent;
+}
+
+.btn-kalendar {
+  border: 1px solid var(--oren);
+  background: var(--oren-muda);
+  color: var(--oren-gelap);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+.btn-kalendar:hover { background: #FFE3C4; }
+
+/* ===== chip tapisan kalendar aktif ===== */
+#tapisanAktifWrap:empty { display: none; }
+.tapisan-aktif-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--oren-muda);
+  border: 1px solid var(--oren);
+  color: var(--oren-gelap);
+  border-radius: 20px;
+  padding: 7px 8px 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.tapisan-aktif-chip button {
+  border: none;
+  background: rgba(211,84,0,0.12);
+  color: var(--oren-gelap);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-family: inherit;
+}
+.tapisan-aktif-chip button:hover { background: rgba(211,84,0,0.22); }
+
+/* ======================================================================
+   PEMBAIKAN (Senarai Pelajar): table lebar (<table>/<thead>/<tbody>) yang
+   dulu perlu skrol mendatar (+ replika skrol atas & thead melekit) DIGANTI
+   dengan senarai kad ".kad-pelajar" menegak — ikut mockup yang user &
+   pensyarah dia dah setuju (spreadsheet nampak "tak profesional"). Semua
+   rule table-only (.table-wrap/table/thead th/tbody td/tr) yang dulu di
+   sini dah DIBUANG terus (bukan lagi terpakai — takde <table> langsung
+   dalam tab ni sekarang). #tbody (id yang sama, cuma tag <div> bukan lagi
+   <tbody>) kekal jadi wrapper senarai kad, supaya semua wiring event
+   sedia ada (tbody.querySelectorAll(...) dalam render()) TAK perlu ubah.
+   ====================================================================== */
+#tbody { display: flex; flex-direction: column; gap: 14px; }
+
+/* ===== kad pelajar (ganti baris table) ===== */
+.kad-pelajar {
+  background: var(--kad);
+  border: 1px solid var(--garis);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+}
+.kad-pelajar-atas {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  margin-bottom: 14px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--garis);
+}
+/* Header kad guna balik .pelajar-cell/.avatar/.pelajar-info/.pelajar-nama/
+   .pelajar-id sedia ada (avatar inisial + nama + badge-notif 🔔 + id) —
+   lihat baris_htmlKepalaKad(); markup/logik tu 100% tak berubah, cuma
+   lokasi dia sekarang jadi header kad (bukan lajur pertama table). */
+.kad-pelajar-status-keseluruhan { flex-shrink: 0; }
+
+.kotak-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.kotak {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--garis);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.kotak .label {
+  font-size: 9.5px;
+  color: var(--teks-lembut);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.kotak .maklumat {
+  font-size: 11.5px;
+  color: var(--teks);
+  line-height: 1.4;
+}
+.kotak .aksi-row {
+  margin-top: auto;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+/* Butang di dalam .aksi-row guna balik .btn/.btn-sesi-toggle sedia ada
+   (width:100% asal dia sesuai table cell dulu) — dalam .kotak yang dah
+   sempit, biar dia isi penuh lebar kotak macam asal, kekal konsisten. */
+
+@media (max-width: 900px) { .kotak-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 620px) { .kotak-grid { grid-template-columns: 1fr; } }
+
+/* ======================================================================
+   TAMBAHAN (mockup Kad A disemak semula): .senarai-kategori gantikan
+   .kotak-grid dlm baris_htmlKad() — 5 kategori disusun KE BAWAH (bukan
+   grid melintang), urutan Pakej → Ceramah → Ujian Komputer → Bayaran →
+   Latihan. .kotak-grid/.kotak di atas DIKEKALKAN (tak dipadam) sebab
+   bina_htmlKotak() masih wujud dlm kod walaupun tak dipanggil lagi.
+   ====================================================================== */
+.senarai-kategori { margin-bottom: 14px; }
+.baris-kat {
+  display: flex; align-items: center; gap: 12px; padding: 11px 2px;
+  border-bottom: 1px solid var(--garis);
+}
+.baris-kat:last-child { border-bottom: none; }
+.ikon-kat {
+  width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.ikon-kat.ikon-selesai { background: var(--hijau-muda); color: var(--hijau); }
+.ikon-kat.ikon-proses { background: var(--kuning-muda); color: var(--kuning); }
+.ikon-kat.ikon-kunci { background: var(--bg); color: var(--teks-lembut); }
+.maklumat-kat { min-width: 0; }
+.label-kat { font-size: 12.5px; font-weight: 700; }
+.sub-kat { font-size: 11px; color: var(--teks-lembut); margin-top: 1px; }
+.aksi-kat { flex-shrink: 0; margin-left: auto; text-align: right; }
+/* lajur aksi guna balik .btn sedia ada (sah-pakej/sah-ceramah/sah-uk/
+   sah-bayar) — cuma overridekan width:100% asal (sesuai .kotak sempit
+   dulu) jadi auto supaya padan duduk sebaris kat hujung kanan baris. */
+.aksi-kat .btn { width: auto; margin-bottom: 0; }
+.aksi-kat .btn:disabled { background: none; color: var(--teks-lembut); box-shadow: none; padding: 6px 0; }
+.teks-sah { font-size: 10.5px; color: var(--hijau); font-weight: 700; white-space: nowrap; }
+.teks-kunci { font-size: 10.5px; color: var(--teks-lembut); white-space: nowrap; }
+.baris-kat-latihan .sub-kat { margin-top: 4px; }
+/* TAMBAHAN (Request 1 — kad kaunter disamakan dgn Kad A): lajur aksi
+   Ceramah/UK kaunter ada ekstra input masa + butang "Pilih/Tukar Tarikh"
+   SEBELUM butang Sahkan (pelajar kaunter tak self-book guna app) —
+   disusun menegak, rapat ke kanan, supaya tetap muat dlm .aksi-kat sempit. */
+.kk-aksi-kaunter { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.kk-aksi-kaunter .kk-input-sesi { width: 112px; }
+@media (max-width: 480px) {
+  .baris-kat { flex-wrap: wrap; }
+  .aksi-kat { margin-left: 44px; }
+  .kk-aksi-kaunter { align-items: stretch; }
+}
+
+.bawah-aksi {
+  padding-top: 14px;
+  border-top: 1px solid var(--garis);
+}
+/* .bawah-aksi menggunakan .aksi-nama-row (display:flex;flex-wrap;gap:5px)
+   sedia ada utk susun atur 3 butang Reset Tarikh/Reset Semua/Padam —
+   lihat baris_htmlAksiBawah(). */
+
+/* ======================================================================
+   TAMBAHAN: kad pelajar kini collapse-by-default / expand-on-klik —
+   header (.kad-pelajar-atas, avatar+nama+id sedia ada dari
+   baris_htmlKepalaKad() + chevron baharu) je yang boleh diklik utk togol;
+   segala isi lain (butang cetak, .kotak-grid, .bawah-aksi) "dipotong"
+   bulat-bulat (markup/logik TAK diubah) ke dalam wrapper baharu
+   .kad-detail yang tersembunyi lalai & didedahkan bila .kad-pelajar
+   ada class "terbuka" (ditogol oleh JS bila header diklik — lihat
+   wiring dalam render(), guna kadTerbukaSet supaya status buka/tutup
+   kekal MERENTAS render() semula). Setiap kad urus status dia sendiri
+   (bukan accordion yang paksa tutup kad lain). ====================== */
+.kad-pelajar-toggle { cursor: pointer; }
+/* Bila tertutup, buang margin/border-bottom header supaya kad nampak
+   padat (sekeping baris je) — bila terbuka, rule .kad-pelajar-atas asal
+   di atas (margin-bottom/padding-bottom/border-bottom) automatik terpakai
+   balik sebab selector :not(.terbuka) ni dah tak padan lagi. */
+.kad-pelajar:not(.terbuka) .kad-pelajar-atas {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.kad-detail { display: none; }
+.kad-pelajar.terbuka .kad-detail { display: block; }
+/* Butang cetak (asalnya duduk kat kanan header, .kad-pelajar-atas-kanan)
+   kini duduk dalam .kad-detail — wrapper ni sekadar kekalkan dia disorong
+   ke kanan macam rupa asal. */
+.kad-detail-atas-kanan-wrap { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+
+.kad-chevron {
+  flex-shrink: 0;
+  color: var(--teks-lembut);
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  margin-left: 6px;
+}
+.kad-pelajar.terbuka .kad-chevron { transform: rotate(180deg); color: var(--oren-gelap); }
+
+/* ===== sel pelajar (nama + avatar + aksi) ===== */
+.pelajar-cell { display: flex; align-items: flex-start; gap: 9px; }
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 11.5px; flex-shrink: 0;
+}
+/* TAMBAHAN: avatar tukar warna ikut status keseluruhan pelajar (ganti
+   badge teks "Dalam Proses/Selesai Semua/Belum Mula" yang dibuang dari
+   header kad — warna bulatan avatar sendiri jadi penanda status,
+   guna semula var --hijau/--kuning/--merah yang sedia ada). */
+.avatar-hijau { background: var(--hijau); }
+.avatar-kuning { background: var(--kuning); }
+.avatar-merah { background: var(--merah); }
+.pelajar-info { min-width: 0; }
+.pelajar-nama { font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.pelajar-id { color: var(--teks-lembut); font-size: 10.5px; margin-top: 1px; margin-bottom: 6px; }
+.aksi-nama-row { display: flex; flex-wrap: wrap; gap: 5px; }
+/* alias sokongan (kalau class lama nama-cell dirujuk di mana-mana) */
+.nama-cell b { display: inline; }
+.nama-cell span { color: var(--teks-lembut); font-size: 11px; }
+.nama-cell > span, .nama-cell > b { display: block; }
+
+/* ===== badge status (pill) ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 700; white-space: nowrap;
+}
+.badge-hijau { background: var(--hijau-muda); color: var(--hijau); }
+.badge-kuning { background: var(--kuning-muda); color: var(--kuning); }
+.badge-abu { background: #F0F0F0; color: var(--teks-lembut); }
+/* TAMBAHAN: badge merah — untuk badge status KESELURUHAN kad pelajar
+   ("Belum Mula", lihat statusKeseluruhanPelajar()) — guna palet
+   --merah/--merah-muda sedia ada (dah dipakai .btn-padam-umum/.lock-note
+   di bawah), TIADA warna baru diperkenalkan. */
+.badge-merah { background: var(--merah-muda); color: var(--merah); }
+/* alias nama class lama (baris_badge() sedia ada — dikekalkan) */
+.badge.sah { background: var(--hijau-muda); color: var(--hijau); }
+.badge.pending { background: var(--kuning-muda); color: var(--kuning); }
+.badge.tiada { background: #F0F0F0; color: var(--teks-lembut); }
+.badge-notif { font-size: 12px; margin-left: 2px; color: var(--kuning); }
+
+.lock-note {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--merah);
+}
+
+/* ===== butang pill "sahkan" dalam table ===== */
+.btn {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn.sah-uk,
+.btn.sah-bayar,
+.btn.sah-ceramah,
+.btn.sah-pakej {
+  background: var(--oren);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(245,130,31,0.3);
+}
+.btn.sah-uk:hover,
+.btn.sah-bayar:hover,
+.btn.sah-ceramah:hover,
+.btn.sah-pakej:hover { background: var(--oren-gelap); }
+.btn:disabled {
+  background: var(--garis);
+  color: #AAAAAA;
+  cursor: default;
+  border: none;
+  box-shadow: none;
+}
+
+/* ===== butang kecil dekat nama pelajar ===== */
+.btn-reset-umum,
+.btn-reset-semua {
+  background: none;
+  border: 1px dashed var(--merah);
+  color: var(--merah);
+  border-radius: 20px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: inherit;
+}
+.btn-reset-semua { border-style: solid; }
+.btn-reset-umum:hover, .btn-reset-semua:hover { background: var(--merah-muda); }
+
+.btn-padam-umum {
+  background: var(--merah);
+  border: none;
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: inherit;
+}
+.btn-padam-umum:hover { background: #8B1A1A; }
+
+/* ===== TAMBAHAN: kad "Pengurusan Pakej" (tab Dashboard) — senarai setiap
+     pakej + bilangan pelajar guna + butang togol aktif/nyahaktif. ===== */
+.pakej-wrap { display: flex; flex-direction: column; gap: 10px; }
+.pakej-baris {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+.pakej-baris-nama { font-size: 13.5px; font-weight: 700; }
+.pakej-baris-sub { font-size: 11.5px; color: var(--kelabu); margin-top: 2px; }
+.btn-pakej-togol {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 13px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  width: auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.btn-pakej-togol.nyahaktif { background: var(--merah); color: #fff; }
+.btn-pakej-togol.nyahaktif:hover { background: #8B1A1A; }
+.btn-pakej-togol.aktifkan { background: var(--hijau); color: #fff; }
+.btn-pakej-togol.aktifkan:hover { background: #14603E; }
+/* TAMBAHAN: bungkusan butang aksi (togol + buang) kekal SEBARIS di sisi
+   kanan tiap baris pakej — guna semula .btn-padam-umum sedia ada (SAMA
+   bahasa visual dgn butang "Padam" pelajar) utk butang "Buang". */
+.pakej-jenis-select { font-family: inherit; font-size: 12px; padding: 5px 8px; border: 1px solid var(--garis, #e7e8ec); border-radius: 8px; background: #fff; color: inherit; cursor: pointer; }
+.pakej-baris-aksi { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
+/* ===== modal umum (Reset Tarikh & Kalendar) ===== */
+#modalOverlay, #modalKalenderOverlay, #modalMaklumatOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,25,0.55);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+#modalBox, #modalKalenderBox, #modalMaklumatBox {
+  background: var(--kad);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.modal-head {
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff;
+  padding: 16px 22px;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-body-pad { padding: 20px 22px 6px; }
+#modalBox h3, .modal-head h3 { margin: 0; font-size: 15px; font-weight: 700; color: #fff; }
+#modalBox .modal-sub, .modal-sub {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--teks-lembut);
+}
+.pilihan-reset {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--garis);
+  background: #FAFAFB;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teks);
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+.pilihan-reset:hover { border-color: var(--oren); background: var(--oren-muda); }
+.pilihan-reset .sub {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--teks-lembut);
+  margin-top: 2px;
+}
+.pilihan-reset:disabled {
+  background: #F5F5F5;
+  color: #B5B5B5;
+  border-color: #EEE;
+  cursor: default;
+}
+.pilihan-reset:disabled .sub { color: #C5C5C5; }
+#btnTutupModal, #btnTutupModalKalendar, #btnTutupModalMaklumat {
+  width: calc(100% - 44px);
+  margin: 0 22px 18px;
+  padding: 10px;
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--teks-lembut);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+#btnTutupModal:hover, #btnTutupModalKalendar:hover, #btnTutupModalMaklumat:hover { background: #FAFAFB; }
+#modalPilihanWrap, #kalendarIsiWrap, #modalMaklumatWrap { padding: 4px 22px 6px; }
+
+/* ===== TAMBAHAN: modal "Maklumat Lengkap" (nama/IC/no.tel/alamat/pakej/
+   emel masa daftar) — dipaparkan dari butang kecil sebelah nama, kat
+   Senarai Pelajar & Pelajar Didaftar Kaunter. ===== */
+.ml-baris { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px solid var(--garis); font-size: 12.5px; }
+.ml-baris:last-child { border-bottom: none; }
+.ml-baris .label { color: var(--teks-lembut); flex-shrink: 0; }
+.ml-baris .nilai { font-weight: 600; text-align: right; }
+.ml-tag-sumber { display: inline-block; margin-top: 10px; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 20px; background: #eef6ff; color: #1c5a94; }
+.btn-maklumat-lengkap {
+  border: 1px solid var(--garis); background: #fff; border-radius: 7px; padding: 3px 9px; font-size: 10.5px;
+  font-weight: 700; color: var(--teks-lembut); cursor: pointer; font-family: inherit; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; margin-left: 6px;
+}
+.btn-maklumat-lengkap:hover { border-color: var(--oren); color: var(--oren-gelap); background: var(--oren-muda); }
+
+/* ===== sesi latihan praktikal ===== */
+.sesi-list { display: flex; flex-direction: column; gap: 8px; }
+.sesi-item {
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  padding: 8px 9px;
+  background: #FAFAFB;
+}
+.sesi-item.tiada-jadual { opacity: 0.55; }
+.sesi-item .sesi-label { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+.sesi-item .sesi-tarikh { font-size: 11px; color: var(--teks-lembut); margin-bottom: 5px; }
+.btn-sesi {
+  border: none;
+  border-radius: 16px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  background: var(--oren);
+  color: #fff;
+  margin-bottom: 4px;
+  font-family: inherit;
+}
+.btn-sesi:hover { background: var(--oren-gelap); }
+.btn-sesi:disabled { background: var(--garis); color: #AAAAAA; cursor: default; }
+.btn-sesi.qti { background: var(--oren-gelap); }
+.btn-sesi.qti:hover { background: #A83E00; }
+.btn-sesi-reset {
+  border: 1px dashed var(--merah);
+  color: var(--merah);
+  background: none;
+  border-radius: 14px;
+  padding: 4px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+}
+.btn-sesi-reset:hover { background: var(--merah-muda); }
+#pilihanSubLatihanWrap { margin-top: -4px; }
+.btn-kembali-modal {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px;
+  border: none;
+  background: none;
+  color: var(--oren-gelap);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.latihan-dropdown { position: relative; }
+.btn-sesi-toggle {
+  border: 1px solid var(--oren);
+  background: var(--oren-muda);
+  color: var(--oren-gelap);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn-sesi-toggle:hover { background: #FFE3C4; }
+.btn-sesi-toggle .anak-panah { margin-left: 4px; font-size: 10px; }
+.latihan-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  background: var(--kad);
+  border: 1px solid var(--garis);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+  width: max-content;
+  max-width: 340px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.latihan-popup.terbuka { display: block; }
+.sesi-grid { display: grid; grid-template-columns: repeat(3, 96px); gap: 8px; }
+
+/* ===== kalendar ===== */
+.kalendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.kalendar-nav button {
+  border: none;
+  background: var(--oren-muda);
+  color: var(--oren-gelap);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.kalendar-nav button:hover { background: #FFE3C4; }
+.kalendar-nav .label-bulan { font-size: 14px; font-weight: 700; }
+.kalendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.kalendar-hari-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--teks-lembut);
+  padding-bottom: 4px;
+}
+.kalendar-tarikh {
+  position: relative;
+  aspect-ratio: 1;
+  /* PEMBAIKAN: tanpa min-width:0, lajur grid ni tak nak susut ikut
+     repeat(7, 1fr) — sebab min-width lalai grid item ialah "auto" (ikut
+     saiz kandungan minimum), dan aspect-ratio:1 tarik lebar ikut tinggi
+     tu. Lepas ni lajur baru betul-betul sama besar & muat dalam kotak. */
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: #FAFAFB;
+  font-size: 12px;
+  color: var(--teks);
+  cursor: pointer;
+  font-family: inherit;
+}
+.kalendar-tarikh:hover { background: var(--oren-muda); }
+/* PEMBAIKAN: "padding: 0" letak sini sebab class .kosong (line kat bawah,
+   untuk mesej "Tiada pelajar dijumpai" dalam table) turut terpakai pada
+   sel kosong kalendar ni (sama nama class) — padding 60px 20px dia buat
+   sel offset kalendar jadi besar melampau. Override balik ke 0 kat sini,
+   TANPA sentuh rule .kosong asal (table tak terjejas langsung). */
+.kalendar-tarikh.kosong { background: none; cursor: default; padding: 0; }
+.kalendar-tarikh.hari-ini { border: 1.5px solid var(--oren); font-weight: 700; }
+.kalendar-tarikh.ada-jadual::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--oren);
+}
+.senarai-jadual-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: #FAFAFB;
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+}
+
+.kosong { text-align: center; padding: 60px 20px; color: var(--teks-lembut); font-size: 13px; }
+
+/* ===== amaran config ===== */
+#config-warning {
+  display: none;
+  background: var(--merah-muda);
+  color: var(--merah);
+  padding: 14px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid #F3C9C9;
+  align-items: center;
+  gap: 8px;
+}
+#config-warning code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; }
+
+/* ===== login ===== */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg);
+}
+#login-card {
+  background: var(--kad);
+  border-radius: 18px;
+  padding: 34px 30px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.08);
+  border: 1px solid var(--garis);
+  text-align: center;
+}
+.login-logo {
+  width: 54px; height: 54px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin: 0 auto 14px;
+  box-shadow: 0 6px 16px rgba(245,130,31,0.35);
+}
+#login-card h2 { margin: 0 0 4px; font-size: 18px; }
+#login-card p { margin: 0 0 22px; font-size: 12px; color: var(--teks-lembut); }
+#login-card input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--garis);
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  text-align: left;
+}
+#login-card button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--oren);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 6px;
+  box-shadow: 0 4px 12px rgba(245,130,31,0.3);
+  font-family: inherit;
+}
+#login-card button:hover { background: var(--oren-gelap); }
+#login-card button:disabled { background: var(--garis); color: #AAAAAA; cursor: default; box-shadow: none; }
+#login-error {
+  color: var(--merah);
+  font-size: 12px;
+  margin-top: 12px;
+  display: none;
+  text-align: left;
+}
+#app-content { display: none; }
+
+/* ===== kotak notifikasi kuning ===== */
+#notifPermintaan:empty { display: none; }
+.notif-kuning {
+  background: var(--kuning-bg);
+  border: 1px solid var(--kuning-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+/* TAMBAHAN: sorotan sekejap bila admin klik kad "Permintaan Tukar Tarikh" */
+.notif-kuning.notif-sorot {
+  border-color: var(--oren);
+  box-shadow: 0 0 0 3px rgba(245,130,31,0.3);
+}
+.notif-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--kuning-teks);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.notif-list { display: flex; flex-direction: column; gap: 10px; }
+.notif-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  background: #FFFDF3;
+  border: 1px solid var(--kuning-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+.notif-info { font-size: 12.5px; color: var(--teks); line-height: 1.5; }
+.notif-sub { display: block; color: var(--teks-lembut); font-size: 11px; margin-top: 2px; }
+
+/* ======================================================================
+   TAMBAHAN: baris permintaan (.notif-item) kini collapse-by-default /
+   expand-on-klik — sama pattern macam kad pelajar di atas. Header
+   (.notif-item-atas: nama+kategori sedia ada + chevron baharu) je yang
+   boleh diklik utk togol; sub-info (Tarikh semasa/Dimohon) + butang
+   "Approve & Reset" sedia ada (markup/data-aksi TAK diubah) "dipotong"
+   ke dalam wrapper baharu .notif-detail, tersembunyi lalai & didedahkan
+   bila .notif-item ada class "terbuka" (ditogol JS — lihat wiring dalam
+   renderNotifPermintaan(), guna notifTerbukaSet supaya status buka/tutup
+   kekal MERENTAS render() semula). .notif-item asalnya flex-row 2 lajur
+   (info | butang) — override flex-direction jadi column di sini sebab
+   struktur dalaman dia sekarang 2 baris bertindan (header lalu detail),
+   bukan lagi 2 lajur sebelah-menyebelah. */
+.notif-item { flex-direction: column; align-items: stretch; }
+.notif-item-toggle { cursor: pointer; }
+.notif-item-atas { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+.notif-detail { display: none; }
+.notif-item.terbuka .notif-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+.notif-item.terbuka .kad-chevron { transform: rotate(180deg); color: var(--oren-gelap); }
+.btn-approve {
+  border: none;
+  border-radius: 20px;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--oren);
+  color: #fff;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 3px 8px rgba(245,130,31,0.3);
+  font-family: inherit;
+}
+.btn-approve:hover { background: var(--oren-gelap); }
+.btn-approve:disabled { background: var(--garis); color: #AAAAAA; cursor: default; box-shadow: none; }
+
+/* ===== toast ===== */
+#toastKotak {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 340px;
+}
+.toast {
+  background: #fff;
+  border-left: 4px solid var(--hijau);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--teks);
+  line-height: 1.5;
+  transform: translateX(140%);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  white-space: pre-line;
+}
+.toast.tunjuk { transform: translateX(0); opacity: 1; }
+.toast i { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.toast.success { border-left-color: var(--hijau); }
+.toast.success i { color: var(--hijau); }
+.toast.error { border-left-color: var(--merah); }
+.toast.error i { color: var(--merah); }
+.toast.warning { border-left-color: var(--kuning); }
+.toast.warning i { color: var(--kuning); }
+.toast.info { border-left-color: var(--oren); }
+.toast.info i { color: var(--oren-gelap); }
+
+@media (max-width: 760px) {
+  main { padding: 18px 14px 50px; }
+  header { padding: 16px; }
+  .cari-wrap { width: 100%; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .btn-kalendar { justify-content: center; }
+  /* PEMBAIKAN: padankan "bleed" wrapper melekit dgn padding mendatar
+     main yang dah bertukar ke 14px kat skrin kecil (asalnya 28px). */
+  .senarai-atas-melekit { margin-left: -14px; margin-right: -14px; padding-left: 14px; padding-right: 14px; }
+}
+
+/* ======================================================================
+   TAMBAHAN: susun atur SIDEBAR + TOPBAR + TAB (ganti header/main lama).
+   Semua warna guna palet oren sedia ada (--oren/--oren-gelap/--bg/--kad/
+   --teks/--teks-lembut/--garis) — TAKDE palet baru diperkenalkan.
+   ====================================================================== */
+/* PEMBAIKAN: .rangka kini height:100vh + overflow:hidden (bukan
+   min-height:100vh) supaya dia jadi "bingkai" tetap setinggi viewport —
+   .sidebar & .utama masing-masing scroll SENDIRI dalam bingkai tu (lihat
+   bawah), jadi sidebar oren tak lagi ikut scroll bila table panjang. */
+.rangka { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar {
+  width: 232px; flex-shrink: 0;
+  background: linear-gradient(180deg, var(--oren), var(--oren-gelap));
+  padding: 22px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  /* PEMBAIKAN: isi penuh tinggi .rangka (100vh) & scroll sendiri kalau
+     senarai Ringkasan/nav jadi terlalu panjang utk viewport pendek. */
+  height: 100%;
+  overflow-y: auto;
+}
+.brand { display: flex; align-items: flex-start; gap: 10px; padding: 0 10px 22px; color: #fff; }
+.brand .ikon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(255,255,255,0.22); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  flex-shrink: 0;
+}
+/* KEMASKINI: nama penuh "Institut Memandu Sanubari Ceria Admin" lagi panjang
+   drpd "IMSC Admin" — kecikkan font & benarkan baris ganda supaya muat
+   dalam sidebar tanpa overflow. */
+.brand span { font-weight: 800; font-size: 11.5px; line-height: 1.35; letter-spacing: 0.2px; padding-top: 8px; display: inline-block; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 14px; border-radius: 10px;
+  color: rgba(255,255,255,0.78); font-size: 13.5px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.nav-item i { width: 16px; text-align: center; font-size: 14px; flex-shrink: 0; }
+.nav-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.nav-item.aktif { background: #ffffff; color: var(--oren-gelap); font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.nav-badge {
+  margin-left: auto; background: rgba(255,255,255,0.22); color: #fff;
+  padding: 1px 8px; border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.nav-item.aktif .nav-badge { background: var(--oren-gelap); color: #fff; }
+.sidebar-bawah { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.18); }
+/* TAMBAHAN: #btnLogout kini duduk dalam sidebar (bukan header lama) — reset
+   gaya <button> asal & padan dengan rupa .nav-item sekeliling dia. */
+#btnLogout {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 11px 14px; border: none; border-radius: 10px;
+  background: none; color: rgba(255,255,255,0.78);
+  font-size: 13.5px; font-weight: 500; font-family: inherit;
+  cursor: pointer; text-align: left;
+}
+#btnLogout:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* PEMBAIKAN: .utama scroll sendiri (bukan document/body yang scroll) —
+   ini yang buat sidebar oren kekal tetap: bila table/content panjang,
+   cuma bahagian ni yang gerak, sidebar terus duduk dalam .rangka yang
+   height-nya dikunci 100vh. .topbar punya position:sticky;top:0 sedia
+   ada terus berfungsi sama macam dulu sebab dia sticky relatif kat
+   scroll-container .utama ni. */
+.utama { flex: 1; min-width: 0; height: 100%; overflow-y: auto; }
+.topbar {
+  background: var(--kad); border-bottom: 1px solid var(--garis);
+  padding: 16px 28px; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; position: sticky; top: 0; z-index: 5;
+}
+.topbar h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 0.2px; }
+.topbar p { margin: 1px 0 0; font-size: 12px; color: var(--teks-lembut); }
+.topbar-kanan { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+/* TAMBAHAN: admin-chip kini duduk atas latar putih topbar (bukan header
+   gradient oren lama) — tukar dari pill lutsinar putih ke pill kelabu muda. */
+.admin-chip {
+  font-size: 12px;
+  background: var(--bg);
+  color: var(--teks-lembut);
+  padding: 7px 14px;
+  border-radius: 20px;
+  display: flex; align-items: center; gap: 7px;
+  font-weight: 600;
+  border: 1px solid var(--garis);
+}
+.admin-wrap { display: flex; align-items: center; gap: 9px; }
+.admin-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; flex-shrink: 0;
+}
+.admin-nama { font-size: 13px; font-weight: 600; }
+
+main { max-width: none; margin: 0; padding: 22px 28px 60px; }
+
+.tab-isi { display: none; }
+.tab-isi.aktif { display: block; }
+
+/* ===== kad-chart (bungkusan carta donut status pelajar) ===== */
+.kad-chart {
+  background: var(--kad); border-radius: 14px; border: 1px solid var(--garis);
+  padding: 18px 20px; box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+  margin-bottom: 20px;
+}
+.kad-chart h3 { margin: 0 0 14px; font-size: 13.5px; font-weight: 700; }
+.donut-wrap { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.donut-legenda { display: flex; flex-direction: column; gap: 10px; }
+.donut-legenda .item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.donut-legenda b { font-size: 13px; }
+.donut-legenda .peratus { color: var(--teks-lembut); font-size: 11px; }
+.titik-legenda { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+
+/* ===== kad-list (panel "Permintaan Tukar Tarikh" — kini tab sendiri) ===== */
+.kad-list {
+  background: var(--kad); border-radius: 14px; border: 1px solid var(--garis);
+  box-shadow: 0 1px 3px rgba(16,24,40,0.05); overflow: hidden; margin-bottom: 20px;
+}
+.kad-list-head {
+  padding: 16px 20px 4px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+/* TAMBAHAN: butang "Details" kedua dalam tab Dashboard — guna balik
+   .btn-kalendar sedia ada, cuma bezakan sikit saiz supaya padan dalam
+   header kad ni (bukan toolbar penuh macam tab Senarai Pelajar). */
+.kad-list-head .btn-kalendar { padding: 7px 14px; font-size: 12.5px; flex-shrink: 0; }
+.kad-list-head h3 { margin: 0; font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.kad-list-head h3 i { color: var(--oren); }
+/* Isi #notifPermintaan (kotak kuning sedia ada) duduk terus dalam kad-list
+   ni — logik & markup dalamnya TAK diubah, cuma dibungkus kad putih. */
+.kad-list #notifPermintaan { padding: 12px 16px 16px; }
+.kad-list #notifPermintaan .notif-kuning { margin-bottom: 0; }
+.kad-list #notifPermintaan:empty::after {
+  content: "Tiada permintaan tukar tarikh buat masa ini.";
+  display: block; padding: 4px 4px 16px; color: var(--teks-lembut); font-size: 12.5px;
+}
+
+@media (max-width: 980px) {
+  .sidebar { width: 200px; }
+  .donut-wrap { justify-content: center; }
+}
+@media (max-width: 760px) {
+  /* PEMBAIKAN: kat skrin kecil, sidebar dah jadi jalur mendatar di atas
+     (flex-direction:row) bukan lajur tegak di sisi — pattern "sidebar
+     tetap + content scroll sendiri" tak sesuai kat sini, jadi balik ke
+     scroll dokumen biasa macam asal supaya tak terpotong. */
+  .rangka { flex-direction: column; height: auto; overflow: visible; }
+  .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 14px; height: auto; overflow-y: visible; }
+  .utama { height: auto; overflow-y: visible; }
+  .brand { padding: 0 8px; margin-right: auto; }
+  .sidebar-bawah { margin-top: 0; padding-top: 0; border-top: none; }
+  main { padding: 18px 14px 50px; }
+}
+
+/* ======================================================================
+   TAMBAHAN: grid 2 lajur untuk kad carta (donut + bar) & legenda mendatar.
+   ====================================================================== */
+.baris-2col { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-bottom: 4px; }
+.legenda { display: flex; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.legenda-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--teks-lembut); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .baris-2col { grid-template-columns: 1fr; }
+}
+
+/* ======================================================================
+   TAMBAHAN: kad carta ke-3 tab Dashboard — heatmap "Jadual Akan Datang
+   (14 Hari)". Guna balik .kad-chart & .legenda/.legenda-item sedia ada
+   (sama pattern donut/bar di atas), cuma tambah header flex (h3 + butang
+   Details) & grid 7-lajur utk sel harian.
+   ====================================================================== */
+.kad-chart-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.kad-chart-head h3 { margin: 0; }
+/* TAMBAHAN: butang "Details" ke-3 (tab Dashboard, kad heatmap) — guna
+   balik .btn-kalendar sedia ada, saiz sama macam butang kad-list-head
+   (rule tu di atas TAK disentuh, ni rule BARU berasingan). */
+.kad-chart-head .btn-kalendar { padding: 7px 14px; font-size: 12.5px; flex-shrink: 0; }
+.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.heatmap-sel { border-radius: 10px; padding: 10px 4px 8px; text-align: center; min-width: 0; border: none; width: 100%; display: block; font-family: inherit; cursor: pointer; }
+.heatmap-sel:hover { filter: brightness(0.96); }
+.heatmap-sel .hari { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+.heatmap-sel .bil { font-size: 18px; font-weight: 800; line-height: 1.3; }
+.heatmap-sel .tarikh { font-size: 10px; }
+/* TAMBAHAN: 4 peringkat keamatan warna — SEMUA dari palet oren sedia ada
+   (--oren-muda/--oren/--oren-gelap) + #A83E00 (dah wujud kat .btn-sesi.qti
+   hover di atas) sebagai peringkat paling gelap. TIADA hue baru. */
+.heatmap-kosong { background: #FAFAFB; }
+.heatmap-kosong .hari, .heatmap-kosong .tarikh { color: var(--teks-lembut); }
+.heatmap-kosong .bil { color: var(--teks); }
+.heatmap-rendah { background: var(--oren-muda); }
+.heatmap-rendah .hari, .heatmap-rendah .tarikh, .heatmap-rendah .bil { color: var(--oren-gelap); }
+.heatmap-sederhana { background: var(--oren); }
+.heatmap-sederhana .hari, .heatmap-sederhana .tarikh, .heatmap-sederhana .bil { color: #fff; }
+.heatmap-tinggi { background: #A83E00; }
+.heatmap-tinggi .hari, .heatmap-tinggi .tarikh, .heatmap-tinggi .bil { color: #fff; }
+.heatmap-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; display: inline-block; }
+.heatmap-swatch.kosong { background: #FAFAFB; border: 1px solid var(--garis); }
+.heatmap-swatch.rendah { background: var(--oren-muda); }
+.heatmap-swatch.sederhana { background: var(--oren); }
+.heatmap-swatch.tinggi { background: #A83E00; }
+@media (max-width: 600px) {
+  .heatmap-grid { grid-template-columns: repeat(7, minmax(0,1fr)); gap: 5px; }
+  .heatmap-sel { padding: 6px 2px 5px; }
+  .heatmap-sel .hari, .heatmap-sel .tarikh { font-size: 9px; }
+  .heatmap-sel .bil { font-size: 14px; }
+}
+
+/* ======================================================================
+   PEMBAIKAN (kembali ke final6): kad ringkasan (#ringkasan) dipulihkan
+   balik ke DALAM sidebar oren sebagai senarai menegak padat — percubaan
+   pusingan lepas (strip skrol mendatar dalam tab Senarai Pelajar) adalah
+   salah faham arahan, dibuang. Override skop ".sidebar .kad-ringkasan ..."
+   sahaja — peraturan asal .ringkasan/.kad-ringkasan/.ikon-* (guna di
+   tempat lain dahulu) TAK disentuh/dibuang, cuma dikalahkan (specificity
+   lagi tinggi) bila elemen sama berada dalam .sidebar.
+   ====================================================================== */
+.sidebar-ringkasan {
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+.sidebar-ringkasan-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.55);
+  font-weight: 700;
+  padding: 0 10px 8px;
+}
+.sidebar .ringkasan {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0;
+}
+.sidebar .kad-ringkasan {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 10px;
+  padding: 9px 10px;
+  gap: 10px;
+  box-shadow: none;
+}
+.sidebar .kad-ringkasan:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.32);
+  box-shadow: none;
+}
+.sidebar .kad-ringkasan.aktif {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.sidebar .kad-ringkasan .ikon-bulat {
+  width: 30px; height: 30px; border-radius: 9px; font-size: 13px;
+}
+/* TAMBAHAN: dalam sidebar, semua varian ikon-oren/hijau/kuning/merah
+   diseragamkan jadi lencana putih lutsinar (kontras lebih baik atas
+   latar oren berbanding warna asal masing2 yang direka utk kad putih). */
+.sidebar .kad-ringkasan .ikon-oren,
+.sidebar .kad-ringkasan .ikon-hijau,
+.sidebar .kad-ringkasan .ikon-kuning,
+.sidebar .kad-ringkasan .ikon-merah {
+  background: rgba(255,255,255,0.22);
+  color: #ffffff;
+}
+.sidebar .kad-ringkasan.aktif .ikon-oren,
+.sidebar .kad-ringkasan.aktif .ikon-hijau,
+.sidebar .kad-ringkasan.aktif .ikon-kuning,
+.sidebar .kad-ringkasan.aktif .ikon-merah {
+  background: var(--oren-muda);
+  color: var(--oren-gelap);
+}
+.sidebar .kad-ringkasan .angka { font-size: 15px; color: #ffffff; }
+.sidebar .kad-ringkasan .label { font-size: 10px; color: rgba(255,255,255,0.82); margin-top: 1px; }
+.sidebar .kad-ringkasan.aktif .angka { color: var(--oren-gelap); }
+.sidebar .kad-ringkasan.aktif .label { color: var(--teks-lembut); }
+
+@media (max-width: 760px) {
+  .sidebar-ringkasan { width: 100%; margin-top: 8px; padding-top: 10px; }
+  .sidebar .ringkasan { flex-direction: row; flex-wrap: wrap; }
+  .sidebar .kad-ringkasan { flex: 1 1 140px; }
+}
+
+/* ======================================================================
+   TAMBAHAN: butang "Cetak Laporan" (ikon printer) dalam header kad pelajar
+   + slip cetak (laporan status seorang pelajar, gaya letterhead) yang
+   dipapar bila butang tu diklik. Markup/gaya kad pelajar sedia ada
+   (.kad-pelajar-atas, .kad-pelajar-status-keseluruhan, dll) TAK disentuh —
+   cuma badge status dibungkus SEKALI dengan butang baru ni dalam wrapper
+   flex kecil (.kad-pelajar-atas-kanan) supaya susun atur asal tak pincang.
+   ====================================================================== */
+.kad-pelajar-atas-kanan { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+/* KEMASKINI (mockup Kad A disemak semula): butang Cetak dah PINDAH ke
+   header sebelah "Maklumat Lengkap" (lihat baris_htmlKepalaKad()) — dari
+   icon-only 30x30 bulat, jadi pill berlabel SAMA gaya dgn
+   .btn-maklumat-lengkap supaya kedua butang tu nampak sepasang. */
+.btn-cetak-slip {
+  border: 1px solid var(--garis); background: #fff; border-radius: 7px; padding: 3px 9px; font-size: 10.5px;
+  font-weight: 700; color: var(--teks-lembut); cursor: pointer; font-family: inherit; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; margin-left: 6px;
+}
+.btn-cetak-slip:hover { border-color: var(--oren); background: var(--oren-muda); color: var(--oren-gelap); }
+
+/* ===== TAMBAHAN: kandungan slip cetak (letterhead + info + seksyen) —
+   guna balik palet warna/badge sedia ada, TIADA warna baru diperkenalkan.
+   .hanya-cetak sembunyikan bekas #slipCetakPelajar di luar mod cetak;
+   blok @media print di bawah yang dedahkan dia semasa print sahaja. ===== */
+.hanya-cetak { display: none; }
+.slip-cetak-kandungan { font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif; color: var(--teks); }
+.slip-letterhead {
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 2px solid var(--oren);
+  padding-bottom: 14px; margin-bottom: 18px;
+}
+.slip-logo {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.slip-letterhead h1 { margin: 0; font-size: 17px; }
+.slip-letterhead p { margin: 2px 0 0; font-size: 12px; color: var(--teks-lembut); }
+.slip-tarikh-jana { margin-left: auto; font-size: 11px; color: var(--teks-lembut); text-align: right; line-height: 1.5; }
+.slip-info-bar {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg); border: 1px solid var(--garis); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 18px;
+}
+.slip-info-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--oren), var(--oren-gelap));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; flex-shrink: 0;
+}
+.slip-info-nama { font-size: 15px; font-weight: 700; }
+.slip-info-sub { font-size: 11.5px; color: var(--teks-lembut); margin-top: 2px; }
+.slip-info-kanan { margin-left: auto; text-align: right; }
+.slip-seksyen { margin-bottom: 16px; }
+.slip-seksyen h3 {
+  margin: 0 0 8px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--oren-gelap); border-bottom: 1px solid var(--garis); padding-bottom: 6px;
+}
+.slip-baris {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--garis);
+}
+.slip-baris:last-child { border-bottom: none; }
+.slip-baris .label { color: var(--teks-lembut); }
+.slip-tandatangan { display: flex; gap: 24px; margin-top: 30px; }
+.slip-tandatangan-kotak {
+  flex: 1; border-top: 1px solid var(--teks); padding-top: 6px;
+  text-align: center; font-size: 11.5px; color: var(--teks-lembut); margin-top: 50px;
+}
+.slip-footer { margin-top: 26px; text-align: center; font-size: 10.5px; color: var(--teks-lembut); }
+
+/* ===== TAMBAHAN: cetak SATU slip sahaja (sembunyi semua UI app lain) =====
+   budak <body> semasa: #config-warning, #login-screen, #app-content,
+   #modalOverlay, #modalKalenderOverlay, #toastKotak, #slipCetakPelajar
+   (+ <script>, tak nampak pun dlm print). Bila class "mod-cetak-slip"
+   ditampal pada <body> (lihat cetakLaporanPelajar()), semua budak body
+   SELAIN #slipCetakPelajar disembunyikan bagi print, supaya cuma slip tu
+   je keluar dalam kertas. */
+@media print {
+  body.mod-cetak-slip > *:not(#slipCetakPelajar) { display: none !important; }
+  body.mod-cetak-slip #slipCetakPelajar {
+    display: block !important;
+    padding: 20px;
+    max-width: 100%;
+  }
+  .slip-tandatangan-kotak { border-top-color: #000; }
+}
+
+/* ===== TAMBAHAN: tab "Daftar Memandu" (admin daftar pelajar dari kaunter) =====
+   Semua class dikhaskan prefix "drm-" (Daftar Ramai Memandu) supaya tak
+   bertembung/guna balik apa-apa class sedia ada. */
+.drm-wrap { max-width: 900px; }
+.drm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 860px) { .drm-grid { grid-template-columns: 1fr; } }
+.drm-seksyen {
+  background: var(--kad); border-radius: 14px; border: 1px solid var(--garis);
+  box-shadow: 0 1px 3px rgba(16,24,40,0.05); padding: 20px 22px;
+}
+.drm-seksyen h4 { margin: 0 0 3px; font-size: 13.5px; display: flex; align-items: center; gap: 7px; }
+.drm-seksyen h4 i { color: var(--oren); font-size: 12px; }
+.drm-seksyen .drm-sub { margin: 0 0 16px; font-size: 11.5px; color: var(--teks-lembut); }
+.drm-medan { margin-bottom: 13px; }
+.drm-medan:last-child { margin-bottom: 0; }
+.drm-medan label { display: block; font-size: 11.5px; font-weight: 700; color: var(--teks-lembut); margin-bottom: 5px; }
+.drm-medan .drm-opsyen { font-size: 10.5px; color: var(--teks-lembut); font-weight: 500; }
+.drm-medan input, .drm-medan select {
+  width: 100%; padding: 9px 11px; border: 1px solid var(--garis); border-radius: 8px;
+  font-size: 13px; font-family: inherit; background: #fff; color: var(--teks);
+}
+.drm-medan input:focus, .drm-medan select:focus { outline: none; border-color: var(--oren); }
+.drm-baris-pass { display: flex; gap: 8px; }
+.drm-baris-pass input { flex: 1; }
+.drm-btn-mini {
+  border: 1px solid var(--garis); background: #fff; border-radius: 8px; padding: 0 11px;
+  font-size: 11.5px; font-weight: 700; color: var(--teks); cursor: pointer; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px; font-family: inherit;
+}
+.drm-btn-mini:hover { border-color: var(--oren); color: var(--oren-gelap); background: var(--oren-muda); }
+.drm-nota {
+  background: #eef6ff; border: 1px solid #cfe4fb; color: #1c5a94; font-size: 11px;
+  border-radius: 8px; padding: 9px 11px; margin-top: 13px; line-height: 1.5;
+}
+.drm-nota i { margin-right: 4px; }
+.drm-ralat {
+  background: var(--merah-bg); border: 1px solid #f5c6c6; color: var(--merah); font-size: 11.5px;
+  border-radius: 8px; padding: 9px 11px; margin-top: 13px; line-height: 1.5; display: none;
+}
+.drm-ralat.tunjuk { display: block; }
+.drm-bawah {
+  background: var(--kad); border-radius: 14px; border: 1px solid var(--garis);
+  box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+  display: flex; justify-content: flex-end; gap: 10px; padding: 18px 22px; align-items: center; flex-wrap: wrap;
+}
+.drm-bawah .drm-amaran { margin-right: auto; font-size: 11px; color: var(--teks-lembut); }
+.drm-btn { border: none; border-radius: 8px; padding: 10px 18px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 7px; }
+.drm-btn-luar { background: #fff; border: 1px solid var(--garis); color: var(--teks); }
+.drm-btn-luar:hover { background: var(--bg); }
+.drm-btn-oren { background: var(--oren); color: #fff; }
+.drm-btn-oren:hover { background: var(--oren-gelap); }
+.drm-btn-oren:disabled { background: var(--garis); color: #AAAAAA; cursor: default; }
+.drm-form { display: none; }
+.drm-form.tunjuk { display: block; }
+.drm-panel-jaya { display: none; padding: 26px 30px; text-align: center; }
+.drm-panel-jaya.tunjuk { display: block; }
+.drm-panel-jaya .drm-ikon-jaya {
+  width: 54px; height: 54px; border-radius: 50%; background: var(--hijau-bg); color: var(--hijau);
+  display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 14px;
+}
+.drm-panel-jaya h3 { margin: 0 0 4px; font-size: 16px; }
+.drm-panel-jaya p.drm-ket { margin: 0 0 20px; font-size: 12.5px; color: var(--teks-lembut); }
+.drm-slip-ringkas {
+  max-width: 380px; margin: 0 auto 20px; background: var(--bg); border: 1px dashed var(--garis);
+  border-radius: 10px; padding: 16px 18px; text-align: left; font-size: 12.5px;
+}
+.drm-slip-ringkas .baris { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--garis); gap: 12px; }
+.drm-slip-ringkas .baris:last-child { border-bottom: none; }
+.drm-slip-ringkas .label { color: var(--teks-lembut); }
+.drm-slip-ringkas .nilai { font-weight: 700; text-align: right; }
+.drm-panel-jaya .drm-aksi-jaya { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.slip-seksyen.slip-kredential { background: var(--oren-muda); border-radius: 10px; padding: 12px 14px; }
+
+/* ===== TAMBAHAN: kalendar Ceramah/Ujian Komputer TERUS dalam borang Daftar
+   Memandu (drmkal- = "drm kalendar", elak bertembung dgn kk-kal- yg dipakai
+   oleh mini-kalendar overlay "Pelajar Didaftar Kaunter"). Kalendar ni
+   terbenam dalam page (bukan overlay/modal) sebab ia sebahagian borang. ===== */
+.drmkal-head { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.drmkal-nav { display: flex; align-items: center; gap: 10px; }
+.drmkal-nav button { border: 1px solid var(--garis); background: #fff; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; color: var(--teks); font-family: inherit; }
+.drmkal-nav button:hover { border-color: var(--oren); color: var(--oren-gelap); background: var(--oren-muda); }
+.drmkal-label { font-size: 12.5px; font-weight: 700; min-width: 108px; text-align: center; }
+.drmkal-grid-hari { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+.drmkal-grid-hari span { font-size: 9.5px; font-weight: 700; color: var(--teks-lembut); text-align: center; }
+.drmkal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; min-height: 34px; }
+.drmkal-sel {
+  aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--garis); background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: inherit; cursor: pointer; font-size: 11.5px; padding: 2px;
+}
+.drmkal-sel .drmkal-angka { font-weight: 700; font-size: 12.5px; }
+.drmkal-sel .drmkal-baki { font-size: 8.5px; color: var(--teks-lembut); margin-top: 1px; }
+.drmkal-sel.drmkal-kosong-slot { visibility: hidden; cursor: default; }
+.drmkal-sel.drmkal-tarikh-tutup { background: var(--bg); color: #C7CAD1; border-color: var(--bg); cursor: not-allowed; }
+.drmkal-sel.drmkal-tarikh-tutup .drmkal-baki { display: none; }
+.drmkal-sel.drmkal-penuh { background: var(--merah-muda); border-color: #f5c6c6; color: var(--merah); cursor: not-allowed; }
+.drmkal-sel.drmkal-penuh .drmkal-baki { color: var(--merah); font-weight: 700; }
+.drmkal-sel.drmkal-sikit .drmkal-baki { color: var(--kuning); font-weight: 700; }
+.drmkal-sel:hover:not(.drmkal-tarikh-tutup):not(.drmkal-penuh) { border-color: var(--oren); background: var(--oren-muda); }
+.drmkal-sel.drmkal-dipilih { background: var(--oren); border-color: var(--oren-gelap); color: #fff; }
+.drmkal-sel.drmkal-dipilih .drmkal-baki { color: #fff; }
+.drmkal-pilihan { margin-top: 10px; font-size: 11.5px; color: var(--teks-lembut); font-weight: 600; }
+.drmkal-sesi-wrap { margin-top: 14px; }
+.drmkal-sesi-wrap label { display: block; font-size: 11.5px; font-weight: 700; color: var(--teks-lembut); margin-bottom: 6px; }
+.drmkal-sesi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.drmkal-sesi-btn {
+  border: 1px solid var(--garis); background: #fff; border-radius: 8px; padding: 8px; text-align: center;
+  cursor: pointer; font-family: inherit;
+}
+.drmkal-sesi-btn .drmkal-sesi-nama { font-weight: 700; font-size: 12px; }
+.drmkal-sesi-btn .drmkal-sesi-baki { font-size: 10.5px; color: var(--teks-lembut); margin-top: 2px; }
+.drmkal-sesi-btn:hover:not(:disabled) { border-color: var(--oren); background: var(--oren-muda); }
+.drmkal-sesi-btn.drmkal-dipilih { background: var(--oren); border-color: var(--oren-gelap); color: #fff; }
+.drmkal-sesi-btn.drmkal-dipilih .drmkal-sesi-baki { color: #fff; }
+.drmkal-sesi-btn:disabled { background: var(--merah-muda); border-color: #f5c6c6; color: var(--merah); cursor: not-allowed; opacity: 1; }
+.drmkal-memuat { grid-column: 1 / -1; font-size: 11px; color: var(--teks-lembut); text-align: center; padding: 8px; }
+
+/* ===== TAMBAHAN: senarai "Pelajar Didaftar Kaunter" (bawah borang Daftar
+   Memandu) — admin pilih tarikh Ceramah/UK/Latihan Praktikal bagi pihak
+   pelajar yang tak guna app. Semua class prefix "kk-" (Kaunter) supaya
+   tak bertembung dgn class sedia ada. ===== */
+.kk-seksyen-tajuk { display: flex; align-items: center; gap: 9px; margin: 0 0 8px; }
+.kk-seksyen-tajuk i { color: var(--oren); }
+.kk-seksyen-tajuk h3 { margin: 0; font-size: 14.5px; }
+.kk-kiraan { background: var(--oren-muda); color: var(--oren-gelap); font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+.kk-ket { margin: 0 0 14px; font-size: 11.5px; color: var(--teks-lembut); }
+.kk-kosong { background: var(--kad); border: 1px dashed var(--garis); border-radius: 12px; padding: 20px; text-align: center; font-size: 12.5px; color: var(--teks-lembut); }
+
+.kk-kad { background: var(--kad); border: 1px solid var(--garis); border-radius: 14px; box-shadow: 0 1px 3px rgba(16,24,40,0.05); margin-bottom: 10px; overflow: hidden; }
+.kk-ringkas { display: flex; align-items: center; gap: 12px; padding: 13px 16px; cursor: pointer; user-select: none; }
+.kk-ringkas:hover { background: var(--bg); }
+.kk-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--oren); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13.5px; flex-shrink: 0; }
+.kk-siapa { flex: 1; min-width: 0; }
+.kk-nama { font-weight: 700; font-size: 14px; }
+.kk-id { font-size: 11.5px; color: var(--teks-lembut); }
+.kk-tag { background: #eef6ff; color: #1c5a94; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+.kk-chevron { color: var(--teks-lembut); font-size: 12px; transition: transform .15s; }
+.kk-kad.terbuka .kk-chevron { transform: rotate(180deg); }
+.kk-detail { max-height: 0; overflow: hidden; transition: max-height .2s ease; }
+.kk-kad.terbuka .kk-detail { max-height: 3000px; }
+.kk-detail-dalam { padding: 4px 18px 18px; border-top: 1px solid var(--garis); }
+
+.kk-blok { background: var(--bg); border: 1px solid var(--garis); border-radius: 10px; padding: 13px 15px; margin-top: 14px; }
+.kk-blok h4 { margin: 0 0 10px; font-size: 12.5px; display: flex; align-items: center; gap: 7px; }
+.kk-blok h4 i { color: var(--oren); font-size: 11px; }
+.kk-baris { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--garis); flex-wrap: wrap; }
+.kk-baris:last-child { border-bottom: none; }
+.kk-baris .kk-label-sesi { font-size: 11.5px; color: var(--teks-lembut); min-width: 52px; font-weight: 600; }
+.kk-baris .kk-nilai-tarikh { font-size: 12px; font-weight: 600; min-width: 90px; }
+.kk-baris .kk-nilai-tarikh.kosong { color: var(--teks-lembut); font-weight: 500; font-style: italic; }
+.kk-baris input.kk-input-sesi { border: 1px solid var(--garis); border-radius: 7px; padding: 5px 7px; font-size: 11px; font-family: inherit; background: #fff; color: var(--teks); width: 108px; }
+.kk-btn-pilih { border: 1px solid var(--garis); background: #fff; border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 700; color: var(--teks); cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.kk-btn-pilih:hover:not(:disabled) { border-color: var(--oren); color: var(--oren-gelap); background: var(--oren-muda); }
+.kk-btn-pilih:disabled { opacity: 0.5; cursor: not-allowed; }
+.kk-baris .lock-note { margin: 0; flex-basis: 100%; }
+/* TAMBAHAN: butang "Sahkan" DIGUNA BALIK terus dari helper sedia ada
+   (.btn/.btn-sesi) yang direka utk lajur table lebar (width:100%) — di
+   sini kita muatkan sebaris dalam .kk-baris flex, jadi override width/
+   margin SAHAJA (warna/saiz font/dll KEKAL sama, tak disentuh). */
+.kk-baris .btn.kk-btn-sah-override,
+.kk-baris .btn-sesi.kk-btn-sah-override { width: auto; margin-bottom: 0; white-space: nowrap; }
+
+#kkKalOverlay { position: fixed; inset: 0; background: rgba(20,20,25,0.5); display: none; align-items: center; justify-content: center; z-index: 60; }
+#kkKalOverlay.tunjuk { display: flex; }
+#kkKalBox { background: #fff; border-radius: 16px; padding: 18px 20px 20px; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+.kk-kal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.kk-kal-tajuk { font-size: 12.5px; font-weight: 700; color: var(--teks-lembut); }
+.kk-kal-nav { display: flex; align-items: center; gap: 10px; }
+.kk-kal-nav button { border: none; background: var(--bg); width: 26px; height: 26px; border-radius: 8px; cursor: pointer; color: var(--teks); }
+.kk-kal-label { font-size: 13px; font-weight: 700; min-width: 110px; text-align: center; display: inline-block; }
+.kk-kal-grid-hari { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+.kk-kal-grid-hari span { font-size: 9.5px; font-weight: 700; color: var(--teks-lembut); text-align: center; }
+.kk-kal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.kk-kal-grid button { aspect-ratio: 1; border: none; border-radius: 8px; background: var(--bg); font-family: inherit; font-size: 12px; cursor: pointer; color: var(--teks); }
+.kk-kal-grid button:hover { background: var(--oren-muda); color: var(--oren-gelap); }
+.kk-kal-grid button.kk-kosong-slot { visibility: hidden; cursor: default; }
+.kk-kal-tutup { margin-top: 14px; width: 100%; border: 1px solid var(--garis); background: #fff; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }

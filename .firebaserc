@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "aduanpusatlatihanmemandu"
+  },
+  "targets": {
+    "aduanpusatlatihanmemandu": {
+      "hosting": {
+        "admin": [
+          "institutmemandusanubariceria"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
